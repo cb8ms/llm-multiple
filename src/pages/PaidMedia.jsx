@@ -118,8 +118,32 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
   const handleDownloadCSV = () => {
-    const lines = result.split("\n").filter((line) => line.trim() !== "");
-    const csvContent = "data:text/csv;charset=utf-8," + lines.map((line) => `"${line.replace(/"/g, '""')}"`).join("\n");
+    if (!result.trim()) return;
+
+    const lines = result
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line); // Remove empty lines
+
+    let formatted = [];
+    let currentSection = "";
+
+    for (const line of lines) {
+      if (line.startsWith("###")) {
+        currentSection = line.replace(/^###\s*/, "");
+        formatted.push([currentSection]); // Add section as a new row
+      } else if (line.startsWith("Primary text:") || line.startsWith("Headline:")) {
+        formatted.push([line]);
+      }
+    }
+
+    if (formatted.length === 0) {
+      alert("No valid ad content found to export.");
+      return;
+    }
+
+    const csvContent = "data:text/csv;charset=utf-8," + formatted.map((row) => `"${row[0].replace(/"/g, '""')}"`).join("\n");
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -131,7 +155,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
 
   return (
     <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Marketing Copy Generator</h1>
+      <h1 className="text-2xl font-bold mb-4">Paid Media Marketing Copy Generator</h1>
 
       <input className="w-full p-2 border mb-2" placeholder="Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
 
