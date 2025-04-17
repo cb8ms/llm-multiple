@@ -123,26 +123,33 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     const lines = result
       .split("\n")
       .map((line) => line.trim())
-      .filter((line) => line); // Remove empty lines
+      .filter(Boolean);
 
-    let formatted = [];
-    let currentSection = "";
+    const rows = [["Version", "Primary Text", "Headline"]];
+    let version = "";
+    let primary = "";
+    let headline = "";
 
     for (const line of lines) {
-      if (line.startsWith("###")) {
-        currentSection = line.replace(/^###\s*/, "");
-        formatted.push([currentSection]); // Add section as a new row
-      } else if (line.startsWith("Primary text:") || line.startsWith("Headline:")) {
-        formatted.push([line]);
+      if (/^Version\s*\d+/i.test(line)) {
+        version = line.trim();
+      } else if (line.startsWith("Primary text:")) {
+        primary = line.replace("Primary text:", "").trim();
+      } else if (line.startsWith("Headline:")) {
+        headline = line.replace("Headline:", "").trim();
+        // When both are ready, push a row
+        rows.push([version, primary, headline]);
+        primary = "";
+        headline = "";
       }
     }
 
-    if (formatted.length === 0) {
-      alert("No valid ad content found to export.");
+    if (rows.length === 1) {
+      alert("No valid rows to export.");
       return;
     }
 
-    const csvContent = "data:text/csv;charset=utf-8," + formatted.map((row) => `"${row[0].replace(/"/g, '""')}"`).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map((row) => row.map((field) => `"${field.replace(/"/g, '""')}"`).join(",")).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
