@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaidMedia() {
@@ -88,7 +89,6 @@ Description (2): 90 characters
 Path (1): 15 characters 
 Path (2): 15 characters 
 
-
 Copy paste output:
 Provide a short paragraph on the reason why this ad copy has been selected followed by a table clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.
 `;
@@ -161,9 +161,10 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
         Generate
       </button>
-      <button className="mb-4 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
+      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
         ← Back
       </button>
+
       {loading && (
         <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
           <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
