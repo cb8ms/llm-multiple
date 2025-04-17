@@ -5,94 +5,26 @@ import { useNavigate } from "react-router-dom";
 export default function SEO() {
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
-  const [platform, setPlatform] = useState("Facebook");
   const [language, setLanguage] = useState("English UK");
-  const [objective, setObjective] = useState("Sales");
+  const [emoji, setEmoji] = useState("Sales");
   const [lines, setLines] = useState(5);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    let prompt = "";
-
     // Clear the previous result and show loader
     setResult("");
     setLoading(true);
 
-    if (platform === "Facebook") {
-      prompt = `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
+    prompt = `You are an expert in writing metadata and you will be given ${url} . If it is a URL take the brand and do not change the brand in any way and feature it in the meta description. 
 
-Input Client:
-Please write the ads for ${url} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+Please provide me with ${lines}  page titles in ${language} that don't exceed a maximum length of 60 characters and ${lines} meta descriptions with a maximum length of 165 characters
 
-Input Language:
-Please write the ads in the correct spelling and grammar of ${language}
+Write the titles and meta descriptions in a way that will entice the user to click through including the brand in the meta description but not in the title. Please include the number of characters, including spaces, in brackets after each response.
+Also, you should ${emoji}  emoji's in the beginning of the sentence
 
-Input Key Marketing Objective:
-The objective of the ads is to ${objective}
-
-If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
-If it is Awareness then you will generate awareness for the product.
-
-#########
-
-Facebook prompt:
-1. Hook/Opening Line: Must capture attention quickly within the primary text
-2. Do not exceed the character limit below in the output format
-3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
-
-**Output Format**
-Provide the following formats below clearly annotating which ad text is for the placement
-
-1. Image Facebook Feed
-Primary text: 50-150 characters
-Headline: 27 characters
-
-2. Facebook Stories
-Primary text: 125 characters
-Headline: 40 characters
-
-3. Facebook Reels
-Primary text: 72 characters
-Headline: 10 characters
-
-4. Facebook Video Feed
-Primary text: 50-150 characters
-Headline: 27 characters`;
-    } else if (platform === "Google Ads") {
-      prompt = `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
-
-Input Client:
-Please write the ads for ${url} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
-
-Input Language:
-Please write the ads in the correct spelling and grammar of ${language}
-
-Input Key Marketing Objective:
-The objective of the ads is to ${objective}
-
-If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
-If it is Awareness then you will generate awareness for the product.
-
-#########
-
-Google Ads prompt:
-1. Hook/Opening Line: Must capture attention quickly within the headlines
-2. Do not exceed the character limit below in the output format
-3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
-
-**Output Format**
-Headline (1): 30 characters
-Headline (2): 30 characters
-Description (1): 90 characters
-Description (2): 90 characters
-Path (1): 15 characters 
-Path (2): 15 characters 
-
-Copy paste output:
-Provide a short paragraph on the reason why this ad copy has been selected followed by a table clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.
-`;
-    }
+Within your response always start with:
+I am just a "robot" so do consider the keywords that you want to target and do not copy paste my suggestions.`;
 
     try {
       const response = await axios.post(
@@ -131,25 +63,21 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
 
   return (
     <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Marketing Copy Generator</h1>
+      <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
 
-      <input className="w-full p-2 border mb-2" placeholder="Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
+      <input className="w-full p-2 border mb-2" placeholder="Insert Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
 
       <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
         <option>English UK</option>
         <option>English US</option>
         <option>Italian</option>
         <option>French</option>
+        <option>German</option>
       </select>
 
-      <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
-        <option>Facebook</option>
-        <option>Google Ads</option>
-      </select>
-
-      <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
-        <option>Sales</option>
-        <option>Awareness</option>
+      <select className="w-full p-2 border mb-2" value={emoji} onChange={(e) => setEmoji(e.target.value)}>
+        <option>Add</option>
+        <option>Not Add</option>
       </select>
 
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
