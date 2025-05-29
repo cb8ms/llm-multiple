@@ -141,14 +141,17 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
   const handleSubmit = async () => {
     setResult("");
     setLoading(true);
-    setProgress({ current: 0, total: 0 });
+
     try {
       if (inputType === "csv") {
         // Batch processing for CSV input
         const prompts = csvRows.map(generatePrompt);
         setProgress({ current: 0, total: prompts.length });
+
         const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy-batch", { prompts }, { headers: { "Content-Type": "application/json" } });
-        const allResults = response.data.responses.map((res, i) => `For input: ${csvRows[i].url}\n${res.replace(/\*\*\*/g, "###").replace(/\*\*/g, "")}\n`);
+
+        // Include CSV line number (assuming first data row is line 2)
+        const allResults = response.data.responses.map((res, i) => `Line ${i + 2} (URL: ${csvRows[i].url}):\n${res.replace(/\*\*\*/g, "###").replace(/\*\*/g, "")}\n`);
         setResult(allResults.join("\n=========================\n\n"));
         setProgress({ current: prompts.length, total: prompts.length });
       } else {
@@ -282,7 +285,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
 
       {loading && (
         <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
-          <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-4 w-4 text-blue-600 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
           </svg>
