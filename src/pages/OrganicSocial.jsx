@@ -145,10 +145,24 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     }
   };
 
-  const handleDownloadCSV = () => {
-    const lines = result.split("\n").filter(line => line.trim() !== "");
-    const csvContent = "data:text/csv;charset=utf-8," + lines.map(line => `"${line.replace(/"/g, '""')}"`).join("\n");
-    const encodedUri = encodeURI(csvContent);
+ const handleDownloadCSV = () => {
+    // Sanitize the result by removing unwanted "###" characters
+    const sanitizedResult = result.replace(/###/g, "");
+
+    const blocks = sanitizedResult.split("\n=========================\n\n").filter(Boolean);
+    const csvRows = [];
+
+    blocks.forEach((block) => {
+      const lines = block.split("\n").filter(Boolean); // Split block into lines
+      lines.forEach((line) => {
+        const safe = line.replace(/"/g, '""'); // Escape double quotes for CSV
+        csvRows.push(`"${safe}"`); // Add each line as a separate row
+      });
+    });
+
+    // Add BOM to ensure proper encoding
+    const csvContent = "\uFEFF" + csvRows.join("\n");
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "marketing-copy.csv");
