@@ -102,7 +102,7 @@ Path (1): 15 characters
 Path (2): 15 characters 
 
 Copy paste output:
-Provide a short paragraph on the reason why this ad copy has been selected followed by a table clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
+Provide a short paragraph on the reason why this ad copy has been selected followed by a table that is JSON friendly that clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
     }
   };
 
@@ -243,7 +243,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       </div>
 
       {result && (
-        <div className="mt-4 max-w-5xl mx-auto">
+        <div className="mt-4 max-w-4xl mx-auto">
           <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
           <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
             Download CSV
