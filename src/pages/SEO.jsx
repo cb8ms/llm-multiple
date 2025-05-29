@@ -191,7 +191,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
     document.body.removeChild(link);
   };
 
-  return (
+return (
   <div className="p-8 mx-auto">
     <div className="max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
@@ -311,7 +311,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
     </div>
 
     {result && (
-      <div className="mt-4 max-w-4xl mx-auto">
+      <div className="mt-4 max-w-5xl mx-auto">
         <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
         <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
           Download CSV
@@ -320,3 +320,4 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
     )}
   </div>
 );
+}
