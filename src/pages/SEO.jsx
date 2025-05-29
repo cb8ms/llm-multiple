@@ -18,6 +18,8 @@ export default function SEO() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [csvRows, setCsvRows] = useState([]);
+  const [useBespoke, setUseBespoke] = useState(false);
+  const [bespokeCharCount, setBespokeCharCount] = useState("");
 
   function parseCsvLine(line) {
     const result = [];
@@ -86,7 +88,22 @@ export default function SEO() {
   };
 
   const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
-    const basePrompt = `You are an SEO expert in writing metadata and you will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs:
+  let titleCharLimit, descCharLimit;
+  if (screenSize === "desktop") {
+    titleCharLimit = "55-65 characters or approximately 580px";
+    descCharLimit = "150-160 characters or approximately 920px";
+  } else if (screenSize === "mobile") {
+    titleCharLimit = "60-75 characters or approximately 580px";
+    descCharLimit = "120-130 characters or approximately 680px";
+  } else if (screenSize === "bespoke" && useBespoke && bespokeCharCount) {
+    titleCharLimit = `${bespokeCharCount} characters (bespoke)`;
+    descCharLimit = `${bespokeCharCount} characters (bespoke)`;
+  } else {
+    titleCharLimit = "55-65 characters or approximately 580px";
+    descCharLimit = "150-160 characters or approximately 920px";
+  }
+
+  const basePrompt = `You are an SEO expert in writing metadata and you will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs:
 
 - URL: ${url}
 - Primary Keyword: ${pKeyword}
@@ -95,7 +112,7 @@ export default function SEO() {
 
 Using the ${url} as the website URL for Tone of Voice.
 
-Please provide me with ${screenSize.toLowerCase()} friendly ${lines} page titles in ${language} that don't exceed a maximum length of ${screenSize === "desktop" ? "55-65 characters or approximately 580px" : "60-75 characters or approximately 580px"} wide also for Meta descriptions don't exceed a maximum length of ${screenSize === "desktop" ? "150-160 characters or approximately 920px" : "120-130 characters or approximately 680px"} wide.
+Please provide me with ${screenSize.toLowerCase()} friendly ${lines} page titles in ${language} that don't exceed a maximum length of ${titleCharLimit} wide also for Meta descriptions don't exceed a maximum length of ${descCharLimit} wide.
 
 Write the titles and meta descriptions for the ${brand} by using the ${pKeyword} as the primary Keyword but also ${sKeyword} as your secondary Keyword(s), in a way that will entice the user to click through including the brand in the meta description but not in the title. Please include the number of characters, including spaces, in brackets after each response.
 
@@ -104,8 +121,8 @@ Ensure that the most important information is included first in both titles and 
 Page titles should also use a hyphen (-) separator rather than a pipe (|) separator.
 
 When providing the output, say: For input: ${pKeyword} and then provide the rest of the output.`;
-    return basePrompt;
-  };
+  return basePrompt;
+};
 
   const handleSubmit = async () => {
     setResult("");
@@ -192,11 +209,47 @@ When providing the output, say: For input: ${pKeyword} and then provide the rest
         <option>German</option>
       </select>
 
-      <select className="w-full p-2 border mb-2" value={screenSize} onChange={(e) => setscreenSize(e.target.value)} required>
-        <option value="desktop">Desktop</option>
-        <option value="mobile">Mobile</option>
-      </select>
+<select className="w-full p-2 border mb-2" value={screenSize} onChange={(e) => {
+  setscreenSize(e.target.value);
+  setUseBespoke(false);
+  setBespokeCharCount("");
+}} required>
+  <option value="desktop">Desktop</option>
+  <option value="mobile">Mobile</option>
+  <option value="bespoke">Bespoke</option>
+</select>
 
+{screenSize === "bespoke" && (
+  <div className="mb-2">
+    <label className="inline-flex items-center">
+      <input
+        type="checkbox"
+        checked={useBespoke}
+        onChange={(e) => setUseBespoke(e.target.checked)}
+        className="mr-2"
+      />
+      Use bespoke character count
+    </label>
+    {useBespoke && (
+      <div className="mt-2">
+        <input
+          type="number"
+          min={1}
+          max={120}
+          value={bespokeCharCount}
+          onChange={(e) => setBespokeCharCount(e.target.value)}
+          className="w-full p-2 border"
+          placeholder="Enter max character count (max 120)"
+        />
+        {bespokeCharCount > 120 && (
+          <div className="text-red-600 text-sm mt-1">
+            Warning: Character count cannot exceed 120.
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+)}
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
         <option value={5}>5</option>
         <option value={10}>10</option>
