@@ -1,162 +1,119 @@
-// /components/SEO.js
 import axios from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function SEO() {
+export default function SocialMedia() {
   const navigate = useNavigate();
   const [inputType, setInputType] = useState("manual");
   const [url, setUrl] = useState("");
-  const [brand, setBrand] = useState("");
-  const [screenSize, setscreenSize] = useState("Desktop");
-  const [pKeyword, setPkeyword] = useState("");
-  const [sKeyword, setsKeyword] = useState("");
   const [csvContent, setCsvContent] = useState("");
+  const [platform, setPlatform] = useState("Facebook");
   const [language, setLanguage] = useState("English UK");
+  const [objective, setObjective] = useState("Sales");
   const [lines, setLines] = useState(5);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [csvRows, setCsvRows] = useState([]);
-  const [bespokeTitleCharCount, setBespokeTitleCharCount] = useState("");
-  const [bespokeDescCharCount, setBespokeDescCharCount] = useState("");
-  const [recommendBrandInTitle, setRecommendBrandInTitle] = useState(false);
-
-  function parseCsvLine(line) {
-    const result = [];
-    let current = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      const nextChar = line[i + 1];
-      if (char === '"') {
-        if (inQuotes && nextChar === '"') {
-          current += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
-      } else if (char === "," && !inQuotes) {
-        result.push(current.trim());
-        current = "";
-      } else {
-        current += char;
-      }
-    }
-    result.push(current.trim());
-    return result;
-  }
+  const [emoji, setEmoji] = useState("");
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file && file.type === "text/csv") {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const lines = e.target.result
-          .split(/\r?\n/)
-          .map((line) => line.trim())
-          .filter(Boolean);
-        const [headerLine, ...rows] = lines;
-        const headers = parseCsvLine(headerLine).map((h) => h.trim().toLowerCase());
-        const expectedHeaders = ["url", "primary keyword", "secondary keyword", "brand"];
-        const headerIndices = expectedHeaders.map((h) => headers.indexOf(h));
-
-        if (headerIndices.includes(-1)) {
-          alert("CSV is missing one or more required columns: URL, Primary Keyword, Secondary Keyword, Brand.");
-          return;
-        }
-
-        const parsedRows = rows.map((row) => {
-          const values = parseCsvLine(row);
-          const rowData = {};
-          expectedHeaders.forEach((header, i) => {
-            rowData[header] = values[headerIndices[i]] || "";
-          });
-          return {
-            url: rowData["url"],
-            pKeyword: rowData["primary keyword"],
-            sKeyword: rowData["secondary keyword"],
-            brand: rowData["brand"],
-          };
-        });
-
-        setCsvRows(parsedRows);
-      };
+      reader.onload = (e) => setCsvContent(e.target.result);
       reader.readAsText(file);
     } else {
       alert("Please upload a valid CSV file.");
     }
   };
 
-  const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
-    let titleCharLimitLabel, descCharLimitLabel;
-    let titleCharLimitMax, descCharLimitMax;
-    let descCharRecommendedMin = 120;
-
-    if (screenSize === "desktop") {
-      titleCharLimitLabel = "55-65 characters or approximately 580px";
-      descCharLimitLabel = "150-160 characters or approximately 920px";
-      titleCharLimitMax = 65;
-      descCharLimitMax = 160;
-    } else if (screenSize === "mobile") {
-      titleCharLimitLabel = "60-75 characters or approximately 580px";
-      descCharLimitLabel = "120-130 characters or approximately 680px";
-      titleCharLimitMax = 130; // Use desc limit for meta
-      descCharLimitMax = 130;
-    } else if (screenSize === "bespoke") {
-      titleCharLimitMax = bespokeTitleCharCount || 65;
-      descCharLimitMax = bespokeDescCharCount || 130;
-      titleCharLimitLabel = `${titleCharLimitMax} `;
-      descCharLimitLabel = `${descCharLimitMax} `;
-    } else {
-      titleCharLimitLabel = "55-65 characters or approximately 580px";
-      descCharLimitLabel = "150-160 characters or approximately 920px";
-      titleCharLimitMax = 65;
-      descCharLimitMax = 160;
+ const generatePrompt = (input) => {
+  if (platform === "Facebook") {
+    let emojiRequirement = "";
+    if (emoji === "true") {
+      emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence. But in order to add emoji's, you should look at profile and only use the same types of emojis as the brand is already using.\n`;
     }
+    return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
 
-    const basePrompt = `You are an SEO expert in writing metadata and must strictly follow the steps below to meet all input requirements. You will provide ${lines} distinct versions of each metadata output.
+**Brand & Product/Service Context** 
+Include the brand name in each headline and try and use as many of the available characters as possible
 
-Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyword}; Brand: ${brand}. Use the tone of voice from the website at ${url}. Write for a ${screenSize.toLowerCase()} display audience in ${language}.
+**Key Marketing Objective** 
+The user should be enticed to click through from the ad to the provided URL
 
-Your task is to write:
-- ${lines} page titles, each no more than ${titleCharLimitMax} characters (including spaces), and ideally within 5 characters of that limit.
-${recommendBrandInTitle ? "- Please do add the Brand name at the end of the Page Titles.\n" : ""}
-- ${lines} meta descriptions, each no more than ${descCharLimitMax} characters (including spaces), and each should use at least ${descCharRecommendedMin} characters. If possible, aim for ${descCharLimitMax} characters for maximum search snippet impact.
+**Messaging Requirements** 
+1. Hook/Opening Line: Must capture attention quickly 
+2. Tone of Voice: Derive the tone of voice from the provided URL and closely align with similar wording
+3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+${emojiRequirement}
 
-Rules:
-1. Maximize character usage: Each output should be as close as possible to the allowed character limit without exceeding it. Do not be conservative with length.
-2. Page titles: Do not include the brand name; use a hyphen (-) as a separator, not a pipe (|); place the primary keyword (${pKeyword}) early, and include secondary keyword(s) (${sKeyword}) naturally.
-3. Meta descriptions: Must include the brand name (${brand}); encourage user engagement and click-through; begin with the most important information to preserve meaning if truncated.
-4. Capitalization: All location names must be capitalized (e.g., "london" → "London"); ensure proper nouns like cities, countries, and regions use correct capitalization.
 
-After each title and description, include the character count in brackets, e.g., [121 characters].
+**Output Format** 
+Provide the following formats below clearly annotating which ad text is for the placement
 
-Begin your output with: For input: ${pKeyword}, and then provide all title and description variations.
+1. Image Facebook Feed
+Primary text: 50-150 characters 
+Headline: 27 characters 
 
-`;
-    return basePrompt;
-  };
+2. Facebook Stories
+Primary text: 125 characters 
+Headline: 40 characters 
+
+3. Facebook Reels
+Primary text: 72 characters 
+Headline: 10 characters 
+
+4. Facebook Video Feed
+Primary text: 50-150 characters 
+Headline: 27 characters 
+
+**Returned format in answer**
+Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide ${lines} options for each placement.
+
+Input Client:
+Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+
+Input Language:
+Please write the ads in the correct spelling and grammar of ${language}
+
+Input Key Marketing Objective:
+The objective of the ads is to ${objective}`;
+  } else {
+    return `Nada`;
+  }
+};
 
   const handleSubmit = async () => {
     setResult("");
     setLoading(true);
     setProgress({ current: 0, total: 0 });
+
     try {
-      const inputs = inputType === "csv" ? csvRows : [{ url, pKeyword, sKeyword, brand }];
+      const inputs = inputType === "csv"
+        ? csvContent.split("\n").map(line => line.trim()).filter(Boolean)
+        : [url];
+
       setProgress({ current: 0, total: inputs.length });
       const allResults = [];
+
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
         const prompt = generatePrompt(input);
-        const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy", { input_text: prompt }, { headers: { "Content-Type": "application/json" } });
+        const response = await axios.post(
+          "https://llm-backend-82gd.onrender.com/api/generate-copy",
+          { input_text: prompt },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
         if (response.data.response) {
-          allResults.push(`For input: ${input.url}\n${response.data.response.replace(/\*\*\*/g, "###").replace(/\*\*/g, "")}\n`);
+          allResults.push(`For input: ${input}\n${response.data.response}\n`);
         } else {
-          allResults.push(`For input: ${input.url}\nNo output received.\n`);
+          allResults.push(`For input: ${input}\nNo output received.\n`);
         }
-        setProgress((prev) => ({ ...prev, current: i + 1 }));
+
+        setProgress({ current: i + 1, total: inputs.length });
       }
+
       setResult(allResults.join("\n=========================\n\n"));
     } catch (err) {
       setResult("Error generating content.");
@@ -191,115 +148,76 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
     document.body.removeChild(link);
   };
 
-return (
-  <div className="p-8 mx-auto">
-    <div className="max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
-      <div className="mb-4">
-        <label className="font-semibold mr-4">Choose Input Type:</label>
-        <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
-          <option value="manual">Manual Input</option>
-          <option value="csv">Upload CSV</option>
-        </select>
-      </div>
-      {inputType === "manual" ? (
-        <>
-          <input className="w-full p-2 border mb-2" placeholder="Insert Client URL" value={url} onChange={(e) => setUrl(e.target.value)} />
-          <input className="w-full p-2 border mb-2" placeholder="Insert Primary keyword" value={pKeyword} onChange={(e) => setPkeyword(e.target.value)} />
-          <input className="w-full p-2 border mb-2" placeholder="Insert Secondary keywords.(If more then one,use comma to separate them)" value={sKeyword} onChange={(e) => setsKeyword(e.target.value)} />
-          <input className="w-full p-2 border mb-2" placeholder="Insert Client Brand name here" value={brand} onChange={(e) => setBrand(e.target.value)} />
-        </>
-      ) : (
-        <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
-          <input type="file" accept=".csv" onChange={handleFileUpload} className="w-full text-center" />
-          <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
-        </div>
-      )}
-      <div className="text-sm mt-1">Select the Language</div>
-      <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
-        <option>English UK</option>
-        <option>English US</option>
-        <option>Italian</option>
-        <option>French</option>
-        <option>German</option>
-      </select>
-      <div className="text-sm mt-1">Select the Screen Size</div>
-      <select
-        className="w-full p-2 border mb-2"
-        value={screenSize}
-        onChange={(e) => {
-          setscreenSize(e.target.value);
-          if (e.target.value === "bespoke") {
-            setBespokeTitleCharCount("");
-            setBespokeDescCharCount("150-160");
-          } else {
-            setBespokeTitleCharCount("");
-            setBespokeDescCharCount("");
-          }
-        }}
-        required
-      >
-        <option value="desktop">Desktop</option>
-        <option value="mobile">Mobile</option>
-        <option value="bespoke">Bespoke</option>
-      </select>
+  return (
+    <div className="p-8 mx-auto">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Organic Social Media Marketing Copy Generator</h1>
 
-      {screenSize === "bespoke" && (
-        <div className="mb-2">
-          <div className="mt-2">
-            <div className="text-sm mt-1">Title</div>
+        <div className="mb-4">
+          <label className="font-semibold mr-4">Choose Input Type:</label>
+          <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
+            <option value="manual">Manual Input</option>
+            <option value="csv">Upload CSV</option>
+          </select>
+        </div>
+
+        {inputType === "manual" ? (
+          <input
+            className="w-full p-2 border mb-2"
+            placeholder="Insert Client URL or keyword"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+        ) : (
+          <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
             <input
-              type="number"
-              min={1}
-              max={120}
-              value={bespokeTitleCharCount}
-              onChange={(e) => setBespokeTitleCharCount(e.target.value)}
-              className="w-full p-2 border mb-2"
-              placeholder="Enter max title character count (max 75)"
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              className="w-full text-center"
             />
-            {bespokeTitleCharCount > 75 && (
-              <div className="text-red-600 text-sm mt-1">
-                Warning: Title character count cannot exceed 75.
-              </div>
-            )}
-            <div className="text-sm mt-1">Meta Description</div>
-            <input
-              type="text"
-              value={bespokeDescCharCount}
-              onChange={(e) => setBespokeDescCharCount(e.target.value)}
-              className="w-full p-2 border"
-              placeholder='Enter max description character count (e.g. "150-160")'
-            />
+            <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
           </div>
-        </div>
-      )}
-      <div className="flex items-center mb-2">
-        <input
-          type="checkbox"
-          id="recommendBrandInTitle"
-          checked={recommendBrandInTitle}
-          onChange={(e) => setRecommendBrandInTitle(e.target.checked)}
-          className="mr-2"
-        />
-        <label htmlFor="recommendBrandInTitle" className="text-sm">
-          Recommend adding the Brand name at the end of Page Titles
-        </label>
-      </div>
-      <div className="text-sm mt-1">Number of Lines</div>
-      <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
-        <option value={5}>5</option>
-        <option value={10}>10</option>
-        <option value={15}>15</option>
+        )}
+
+        <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
+          <option>English UK</option>
+          <option>English US</option>
+          <option>Italian</option>
+          <option>French</option>
+        </select>
+
+        <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
+          <option>Facebook</option>
+          <option>Instagram</option>
+           <option>TikTok</option>
+        </select>
+
+      <select className="w-full p-2 border mb-2" value={emoji} onChange={(e) => setEmoji(e.target.value)} required>
+        <option value="" disabled hidden>
+          Add Emojis?
+        </option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
       </select>
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
-        Generate
-      </button>
-      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
-        ← Back
-      </button>
+        <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
+          <option>Sales</option>
+          <option>Awareness</option>
+        </select>
 
-      {loading && (
+        <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={15}>15</option>
+        </select>
+
+        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
+          Generate
+        </button>
+        <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>← Back</button>
+
+        {loading && (
           <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
             <svg className="animate-spin h-4 w-4 text-blue-600 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -308,16 +226,16 @@ return (
             Working on it… ({progress.current}/{progress.total})
           </div>
         )}
-    </div>
-
-    {result && (
-      <div className="mt-4 max-w-5xl mx-auto">
-        <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
-        <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
-          Download CSV
-        </button>
       </div>
-    )}
-  </div>
-);
+
+      {result && (
+        <div className="mt-4 max-w-4xl mx-auto">
+          <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
+          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
+            Download CSV
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
