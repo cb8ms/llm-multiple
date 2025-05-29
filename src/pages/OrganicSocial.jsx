@@ -31,7 +31,7 @@ export default function SocialMedia() {
   if (platform === "Facebook") {
     let emojiRequirement = "";
     if (emoji === "true") {
-      emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence.\n`;
+      emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence. But in order to add emoji's, you should look at profile and only use the same types of emojis as the brand is already using.\n`;
     }
     return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
 
@@ -68,7 +68,7 @@ Primary text: 50-150 characters
 Headline: 27 characters 
 
 **Returned format in answer**
-Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide 3 options for each placement.
+Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide ${lines} options for each placement.
 
 Input Client:
 Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
