@@ -192,7 +192,8 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
   };
 
   return (
-    <div className="p-8 max-w-xl mx-auto">
+  <div className="p-8 mx-auto">
+    <div className="max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
       <div className="mb-4">
         <label className="font-semibold mr-4">Choose Input Type:</label>
@@ -247,16 +248,39 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         <div className="mb-2">
           <div className="mt-2">
             <div className="text-sm mt-1">Title</div>
-            <input type="number" min={1} max={120} value={bespokeTitleCharCount} onChange={(e) => setBespokeTitleCharCount(e.target.value)} className="w-full p-2 border mb-2" placeholder="Enter max title character count (max 75)" />
-            {bespokeTitleCharCount > 75 && <div className="text-red-600 text-sm mt-1">Warning: Title character count cannot exceed 75.</div>}
+            <input
+              type="number"
+              min={1}
+              max={120}
+              value={bespokeTitleCharCount}
+              onChange={(e) => setBespokeTitleCharCount(e.target.value)}
+              className="w-full p-2 border mb-2"
+              placeholder="Enter max title character count (max 75)"
+            />
+            {bespokeTitleCharCount > 75 && (
+              <div className="text-red-600 text-sm mt-1">
+                Warning: Title character count cannot exceed 75.
+              </div>
+            )}
             <div className="text-sm mt-1">Meta Description</div>
-            <input type="text" value={bespokeDescCharCount} onChange={(e) => setBespokeDescCharCount(e.target.value)} className="w-full p-2 border" placeholder='Enter max description character count (e.g. "150-160")' />
-            {/* Optional: Add a warning for description char count if you want */}
+            <input
+              type="text"
+              value={bespokeDescCharCount}
+              onChange={(e) => setBespokeDescCharCount(e.target.value)}
+              className="w-full p-2 border"
+              placeholder='Enter max description character count (e.g. "150-160")'
+            />
           </div>
         </div>
       )}
       <div className="flex items-center mb-2">
-        <input type="checkbox" id="recommendBrandInTitle" checked={recommendBrandInTitle} onChange={(e) => setRecommendBrandInTitle(e.target.checked)} className="mr-2" />
+        <input
+          type="checkbox"
+          id="recommendBrandInTitle"
+          checked={recommendBrandInTitle}
+          onChange={(e) => setRecommendBrandInTitle(e.target.checked)}
+          className="mr-2"
+        />
         <label htmlFor="recommendBrandInTitle" className="text-sm">
           Recommend adding the Brand name at the end of Page Titles
         </label>
@@ -284,15 +308,15 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
           Working on it… ({progress.current}/{progress.total})
         </div>
       )}
-
-      {result && (
-        <div className="mt-4">
-          <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
-          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
-            Download CSV
-          </button>
-        </div>
-      )}
     </div>
-  );
-}
+
+    {result && (
+      <div className="mt-4 max-w-5xl mx-auto">
+        <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
+        <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
+          Download CSV
+        </button>
+      </div>
+    )}
+  </div>
+);
