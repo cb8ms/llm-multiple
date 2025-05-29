@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function PaidMedia() {
+export default function SocialMedia() {
   const navigate = useNavigate();
   const [inputType, setInputType] = useState("manual");
   const [url, setUrl] = useState("");
@@ -28,7 +28,40 @@ export default function PaidMedia() {
 
   const generatePrompt = (input) => {
     if (platform === "Facebook") {
-      return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
+      return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that ${lines} lines of the ad closely aligns with the request.
+
+**Brand & Product/Service Context** 
+Include the brand name in each headline and try and use as many of the available characters as possible
+
+**Key Marketing Objective** 
+The user should be enticed to click through from the ad to the provided URL
+
+**Messaging Requirements** 
+1. Hook/Opening Line: Must capture attention quickly 
+2. Tone of Voice: Derive the tone of voice from the provided URL and closely align with similar wording
+3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+
+**Output Format** 
+Provide the following formats below clearly annotating which ad text is for the placement
+
+1. Image Facebook Feed
+Primary text: 50-150 characters 
+Headline: 27 characters 
+
+2. Facebook Stories
+Primary text: 125 characters 
+Headline: 40 characters 
+
+3. Facebook Reels
+Primary text: 72 characters 
+Headline: 10 characters 
+
+4. Facebook Video Feed
+Primary text: 50-150 characters 
+Headline: 27 characters 
+
+**Returned format in answer**
+Provide a short paragraph on the reason why this ad copy has been selected followed by a table (column 1 being the format, column 2 the headline, column 3 the primary text). To ensure client satisfaction you will provide 3 options for each placement.
 
 Input Client:
 Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
@@ -37,36 +70,7 @@ Input Language:
 Please write the ads in the correct spelling and grammar of ${language}
 
 Input Key Marketing Objective:
-The objective of the ads is to ${objective}
-
-If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
-If it is Awareness then you will generate awareness for the product.
-
-#########
-
-Facebook prompt:
-1. Hook/Opening Line: Must capture attention quickly within the primary text
-2. Do not exceed the character limit below in the output format
-3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
-
-**Output Format**
-Provide the following formats below clearly annotating which ad text is for the placement
-
-1. Image Facebook Feed
-Primary text: 50-150 characters
-Headline: 27 characters
-
-2. Facebook Stories
-Primary text: 125 characters
-Headline: 40 characters
-
-3. Facebook Reels
-Primary text: 72 characters
-Headline: 10 characters
-
-4. Facebook Video Feed
-Primary text: 50-150 characters
-Headline: 27 characters`;
+The objective of the ads is to ${objective}`;
     } else {
       return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
@@ -155,7 +159,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
 
   return (
     <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Paid Media Marketing Copy Generator</h1>
+      <h1 className="text-2xl font-bold mb-4">Organic Social Media Marketing Copy Generator</h1>
 
       <div className="mb-4">
         <label className="font-semibold mr-4">Choose Input Type:</label>
