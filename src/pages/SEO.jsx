@@ -18,8 +18,9 @@ export default function SEO() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [csvRows, setCsvRows] = useState([]);
-  const [useBespoke, setUseBespoke] = useState(false);
-  const [bespokeCharCount, setBespokeCharCount] = useState("");
+  const [bespokeTitleCharCount, setBespokeTitleCharCount] = useState("");
+  const [bespokeDescCharCount, setBespokeDescCharCount] = useState("");
+
 
   function parseCsvLine(line) {
     const result = [];
@@ -98,6 +99,26 @@ export default function SEO() {
   } else if (screenSize === "bespoke" && useBespoke && bespokeCharCount) {
     titleCharLimit = `${bespokeCharCount} characters (bespoke)`;
     descCharLimit = `${bespokeCharCount} characters (bespoke)`;
+  } else {
+    titleCharLimit = "55-65 characters or approximately 580px";
+    descCharLimit = "150-160 characters or approximately 920px";
+  }
+
+  const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
+  let titleCharLimit, descCharLimit;
+  if (screenSize === "desktop") {
+    titleCharLimit = "55-65 characters or approximately 580px";
+    descCharLimit = "150-160 characters or approximately 920px";
+  } else if (screenSize === "mobile") {
+    titleCharLimit = "60-75 characters or approximately 580px";
+    descCharLimit = "120-130 characters or approximately 680px";
+  } else if (screenSize === "bespoke") {
+    titleCharLimit = bespokeTitleCharCount
+      ? `${bespokeTitleCharCount} characters (bespoke)`
+      : "";
+    descCharLimit = bespokeDescCharCount
+      ? `${bespokeDescCharCount} characters (bespoke)`
+      : "";
   } else {
     titleCharLimit = "55-65 characters or approximately 580px";
     descCharLimit = "150-160 characters or approximately 920px";
@@ -211,8 +232,13 @@ When providing the output, say: For input: ${pKeyword} and then provide the rest
 
 <select className="w-full p-2 border mb-2" value={screenSize} onChange={(e) => {
   setscreenSize(e.target.value);
-  setUseBespoke(false);
-  setBespokeCharCount("");
+  if (e.target.value === "bespoke") {
+    setBespokeTitleCharCount("");
+    setBespokeDescCharCount("150-160");
+  } else {
+    setBespokeTitleCharCount("");
+    setBespokeDescCharCount("");
+  }
 }} required>
   <option value="desktop">Desktop</option>
   <option value="mobile">Mobile</option>
@@ -221,33 +247,30 @@ When providing the output, say: For input: ${pKeyword} and then provide the rest
 
 {screenSize === "bespoke" && (
   <div className="mb-2">
-    <label className="inline-flex items-center">
+    <div className="mt-2">
       <input
-        type="checkbox"
-        checked={useBespoke}
-        onChange={(e) => setUseBespoke(e.target.checked)}
-        className="mr-2"
+        type="number"
+        min={1}
+        max={120}
+        value={bespokeTitleCharCount}
+        onChange={(e) => setBespokeTitleCharCount(e.target.value)}
+        className="w-full p-2 border mb-2"
+        placeholder="Enter max title character count (max 120)"
       />
-      Use bespoke character count
-    </label>
-    {useBespoke && (
-      <div className="mt-2">
-        <input
-          type="number"
-          min={1}
-          max={120}
-          value={bespokeCharCount}
-          onChange={(e) => setBespokeCharCount(e.target.value)}
-          className="w-full p-2 border"
-          placeholder="Enter max character count (max 120)"
-        />
-        {bespokeCharCount > 120 && (
-          <div className="text-red-600 text-sm mt-1">
-            Warning: Character count cannot exceed 120.
-          </div>
-        )}
-      </div>
-    )}
+      {bespokeTitleCharCount > 120 && (
+        <div className="text-red-600 text-sm mt-1">
+          Warning: Title character count cannot exceed 120.
+        </div>
+      )}
+      <input
+        type="text"
+        value={bespokeDescCharCount}
+        onChange={(e) => setBespokeDescCharCount(e.target.value)}
+        className="w-full p-2 border"
+        placeholder='Enter max description character count (e.g. "150-160")'
+      />
+      {/* Optional: Add a warning for description char count if you want */}
+    </div>
   </div>
 )}
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
