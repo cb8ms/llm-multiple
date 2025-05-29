@@ -14,6 +14,7 @@ export default function SocialMedia() {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [emoji, setEmoji] = useState("");
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -26,9 +27,13 @@ export default function SocialMedia() {
     }
   };
 
-  const generatePrompt = (input) => {
-    if (platform === "Facebook") {
-      return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
+ const generatePrompt = (input) => {
+  if (platform === "Facebook") {
+    let emojiRequirement = "";
+    if (emoji !== "false") {
+      emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence.\n`;
+    }
+    return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
 
 **Brand & Product/Service Context** 
 Include the brand name in each headline and try and use as many of the available characters as possible
@@ -40,6 +45,8 @@ The user should be enticed to click through from the ad to the provided URL
 1. Hook/Opening Line: Must capture attention quickly 
 2. Tone of Voice: Derive the tone of voice from the provided URL and closely align with similar wording
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+${emojiRequirement}
+
 
 **Output Format** 
 Provide the following formats below clearly annotating which ad text is for the placement
@@ -61,7 +68,7 @@ Primary text: 50-150 characters
 Headline: 27 characters 
 
 **Returned format in answer**
-Provide a short paragraph on the reason why this ad copy has been selected followed by a JSON friendly table (column 1 being the format, column 2 the headline, column 3 the primary text). To ensure client satisfaction you will provide 3 options for each placement.
+Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide 3 options for each placement.
 
 Input Client:
 Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
@@ -71,40 +78,10 @@ Please write the ads in the correct spelling and grammar of ${language}
 
 Input Key Marketing Objective:
 The objective of the ads is to ${objective}`;
-    } else {
-      return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
-
-Input Client:
-Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
-
-Input Language:
-Please write the ads in the correct spelling and grammar of ${language}
-
-Input Key Marketing Objective:
-The objective of the ads is to ${objective}
-
-If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
-If it is Awareness then you will generate awareness for the product.
-
-#########
-
-Google Ads prompt:
-1. Hook/Opening Line: Must capture attention quickly within the headlines
-2. Do not exceed the character limit below in the output format
-3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
-
-**Output Format**
-Headline (1): 30 characters
-Headline (2): 30 characters
-Description (1): 90 characters
-Description (2): 90 characters
-Path (1): 15 characters 
-Path (2): 15 characters 
-
-Copy paste output:
-Provide a short paragraph on the reason why this ad copy has been selected followed by a table that is JSON friendly that clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
-    }
-  };
+  } else {
+    return `Nada`;
+  }
+};
 
   const handleSubmit = async () => {
     setResult("");
@@ -212,8 +189,17 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
 
         <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
           <option>Facebook</option>
-          <option>Google Ads</option>
+          <option>Instagram</option>
+           <option>TikTok</option>
         </select>
+
+      <select className="w-full p-2 border mb-2" value={emoji} onChange={(e) => setEmoji(e.target.value)} required>
+        <option value="" disabled hidden>
+          Add Emojis?
+        </option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
 
         <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
           <option>Sales</option>
