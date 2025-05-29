@@ -7,6 +7,7 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       input: "index.html", // Ensure the path is correct to the index.html file
+       external: ['papaparse'],
     },
   },
 });

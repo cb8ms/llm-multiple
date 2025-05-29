@@ -4,26 +4,34 @@ import { useNavigate } from "react-router-dom";
 
 export default function PaidMedia() {
   const navigate = useNavigate();
+  const [inputType, setInputType] = useState("manual");
   const [url, setUrl] = useState("");
+  const [csvContent, setCsvContent] = useState("");
   const [platform, setPlatform] = useState("Facebook");
   const [language, setLanguage] = useState("English UK");
   const [objective, setObjective] = useState("Sales");
   const [lines, setLines] = useState(5);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
 
-  const handleSubmit = async () => {
-    let prompt = "";
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "text/csv") {
+      const reader = new FileReader();
+      reader.onload = (e) => setCsvContent(e.target.result);
+      reader.readAsText(file);
+    } else {
+      alert("Please upload a valid CSV file.");
+    }
+  };
 
-    // Clear the previous result and show loader
-    setResult("");
-    setLoading(true);
-
+  const generatePrompt = (input) => {
     if (platform === "Facebook") {
-      prompt = `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
+      return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
 Input Client:
-Please write the ads for ${url} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
 
 Input Language:
 Please write the ads in the correct spelling and grammar of ${language}
@@ -59,11 +67,11 @@ Headline: 10 characters
 4. Facebook Video Feed
 Primary text: 50-150 characters
 Headline: 27 characters`;
-    } else if (platform === "Google Ads") {
-      prompt = `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
+    } else {
+      return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
 Input Client:
-Please write the ads for ${url} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
 
 Input Language:
 Please write the ads in the correct spelling and grammar of ${language}
@@ -90,26 +98,42 @@ Path (1): 15 characters
 Path (2): 15 characters 
 
 Copy paste output:
-Provide a short paragraph on the reason why this ad copy has been selected followed by a table clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.
-`;
+Provide a short paragraph on the reason why this ad copy has been selected followed by a table clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
     }
+  };
+
+  const handleSubmit = async () => {
+    setResult("");
+    setLoading(true);
+    setProgress({ current: 0, total: 0 });
 
     try {
-      const response = await axios.post(
-        "https://llm-backend-82gd.onrender.com/api/generate-copy",
-        { input_text: prompt },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const inputs = inputType === "csv"
+        ? csvContent.split("\n").map(line => line.trim()).filter(Boolean)
+        : [url];
 
-      if (response.data.response) {
-        setResult(response.data.response);
-      } else {
-        setResult("No output received from the backend.");
+      setProgress({ current: 0, total: inputs.length });
+      const allResults = [];
+
+      for (let i = 0; i < inputs.length; i++) {
+        const input = inputs[i];
+        const prompt = generatePrompt(input);
+        const response = await axios.post(
+          "https://llm-backend-82gd.onrender.com/api/generate-copy",
+          { input_text: prompt },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        if (response.data.response) {
+          allResults.push(`For input: ${input}\n${response.data.response}\n`);
+        } else {
+          allResults.push(`For input: ${input}\nNo output received.\n`);
+        }
+
+        setProgress({ current: i + 1, total: inputs.length });
       }
+
+      setResult(allResults.join("\n=========================\n\n"));
     } catch (err) {
       setResult("Error generating content.");
     } finally {
@@ -118,39 +142,8 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
   const handleDownloadCSV = () => {
-    if (!result.trim()) return;
-
-    const lines = result
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    const rows = [["Version", "Primary Text", "Headline"]];
-    let version = "";
-    let primary = "";
-    let headline = "";
-
-    for (const line of lines) {
-      if (/^Version\s*\d+/i.test(line)) {
-        version = line.trim();
-      } else if (line.startsWith("Primary text:")) {
-        primary = line.replace("Primary text:", "").trim();
-      } else if (line.startsWith("Headline:")) {
-        headline = line.replace("Headline:", "").trim();
-        // When both are ready, push a row
-        rows.push([version, primary, headline]);
-        primary = "";
-        headline = "";
-      }
-    }
-
-    if (rows.length === 1) {
-      alert("No valid rows to export.");
-      return;
-    }
-
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map((row) => row.map((field) => `"${field.replace(/"/g, '""')}"`).join(",")).join("\n");
-
+    const lines = result.split("\n").filter(line => line.trim() !== "");
+    const csvContent = "data:text/csv;charset=utf-8," + lines.map(line => `"${line.replace(/"/g, '""')}"`).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -164,7 +157,32 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     <div className="p-8 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Paid Media Marketing Copy Generator</h1>
 
-      <input className="w-full p-2 border mb-2" placeholder="Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
+      <div className="mb-4">
+        <label className="font-semibold mr-4">Choose Input Type:</label>
+        <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
+          <option value="manual">Manual Input</option>
+          <option value="csv">Upload CSV</option>
+        </select>
+      </div>
+
+      {inputType === "manual" ? (
+        <input
+          className="w-full p-2 border mb-2"
+          placeholder="Insert Client URL or keyword"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+      ) : (
+        <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className="w-full text-center"
+          />
+          <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
+        </div>
+      )}
 
       <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
         <option>English UK</option>
@@ -192,9 +210,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
         Generate
       </button>
-      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
-        ← Back
-      </button>
+      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>← Back</button>
 
       {loading && (
         <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
@@ -202,7 +218,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
           </svg>
-          Working on it…
+          Working on it… ({progress.current}/{progress.total})
         </div>
       )}
 
