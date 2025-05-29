@@ -232,6 +232,9 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
 {screenSize === "bespoke" && (
   <div className="mb-2">
     <div className="mt-2">
+          <div className="text-sm mt-1">
+          Title
+        </div>
       <input
         type="number"
         min={1}
@@ -239,13 +242,16 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         value={bespokeTitleCharCount}
         onChange={(e) => setBespokeTitleCharCount(e.target.value)}
         className="w-full p-2 border mb-2"
-        placeholder="Enter max title character count (max 120)"
+        placeholder="Enter max title character count (max 75)"
       />
-      {bespokeTitleCharCount > 120 && (
+      {bespokeTitleCharCount > 75 && (
         <div className="text-red-600 text-sm mt-1">
           Warning: Title character count cannot exceed 120.
         </div>
       )}
+          <div className="text-sm mt-1">
+          Meta Description
+        </div>
       <input
         type="text"
         value={bespokeDescCharCount}
