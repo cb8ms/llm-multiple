@@ -20,6 +20,7 @@ export default function SEO() {
   const [csvRows, setCsvRows] = useState([]);
   const [bespokeTitleCharCount, setBespokeTitleCharCount] = useState("");
   const [bespokeDescCharCount, setBespokeDescCharCount] = useState("");
+  const [recommendBrandInTitle, setRecommendBrandInTitle] = useState(false);
 
 
   function parseCsvLine(line) {
@@ -107,8 +108,8 @@ titleCharLimitLabel = "55-65 characters or approximately 580px";
   } else if (screenSize === "bespoke") {
     titleCharLimitMax = bespokeTitleCharCount || 65;
     descCharLimitMax = bespokeDescCharCount || 130;
-    titleCharLimitLabel = `${titleCharLimitMax} characters (bespoke)`;
-    descCharLimitLabel = `${descCharLimitMax} characters (bespoke)`;
+    titleCharLimitLabel = `${titleCharLimitMax} `;
+    descCharLimitLabel = `${descCharLimitMax} `;
   } else {
     titleCharLimitLabel = "55-65 characters or approximately 580px";
     descCharLimitLabel = "150-160 characters or approximately 920px";
@@ -122,6 +123,7 @@ Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyw
 
 Your task is to write:
 - ${lines} page titles, each no more than ${titleCharLimitMax} characters (including spaces), and ideally within 5 characters of that limit.
+${recommendBrandInTitle ? "- Where possible, recommend adding the Brand name at the end of the Page Titles.\n" : ""}
 - ${lines} meta descriptions, each no more than ${descCharLimitMax} characters (including spaces), and each should use at least ${descCharRecommendedMin} characters. If possible, aim for ${descCharLimitMax} characters for maximum search snippet impact.
 
 Rules:
@@ -276,7 +278,18 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
     </div>
   </div>
 )}
-
+<div className="flex items-center mb-2">
+  <input
+    type="checkbox"
+    id="recommendBrandInTitle"
+    checked={recommendBrandInTitle}
+    onChange={(e) => setRecommendBrandInTitle(e.target.checked)}
+    className="mr-2"
+  />
+  <label htmlFor="recommendBrandInTitle" className="text-sm">
+    Recommend adding the Brand name at the end of Page Titles
+  </label>
+</div>
  <div className="text-sm mt-1">
           Number of Lines
         </div>
