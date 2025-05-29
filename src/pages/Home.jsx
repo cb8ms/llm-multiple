@@ -12,7 +12,7 @@ export default function Home() {
       <button onClick={() => navigate("/paid")} className="bg-blue-600 text-white px-6 py-3 rounded">
         Paid Media
       </button>
-      <button onClick={() => navigate("/organicSocial")} className="bg-green-600 text-white px-6 py-3 rounded ml-4">
+      <button onClick={() => navigate("/organicSocial")} className="bg-green-600 text-white px-6 py-3 rounded mr-4">
         Organic Social
       </button>
     </div>
