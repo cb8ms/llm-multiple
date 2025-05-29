@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaidMedia() {
@@ -108,13 +108,9 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     setProgress({ current: 0, total: 0 });
 
     try {
-      const inputs =
-        inputType === "csv"
-          ? csvContent
-              .split("\n")
-              .map((line) => line.trim())
-              .filter(Boolean)
-          : [url];
+      const inputs = inputType === "csv"
+        ? csvContent.split("\n").map(line => line.trim()).filter(Boolean)
+        : [url];
 
       setProgress({ current: 0, total: inputs.length });
       const allResults = [];
@@ -122,7 +118,11 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
         const prompt = generatePrompt(input);
-        const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy", { input_text: prompt }, { headers: { "Content-Type": "application/json" } });
+        const response = await axios.post(
+          "https://llm-backend-82gd.onrender.com/api/generate-copy",
+          { input_text: prompt },
+          { headers: { "Content-Type": "application/json" } }
+        );
 
         if (response.data.response) {
           allResults.push(`For input: ${input}\n${response.data.response}\n`);
@@ -142,8 +142,8 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
   const handleDownloadCSV = () => {
-    const lines = result.split("\n").filter((line) => line.trim() !== "");
-    const csvContent = "data:text/csv;charset=utf-8," + lines.map((line) => `"${line.replace(/"/g, '""')}"`).join("\n");
+    const lines = result.split("\n").filter(line => line.trim() !== "");
+    const csvContent = "data:text/csv;charset=utf-8," + lines.map(line => `"${line.replace(/"/g, '""')}"`).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -166,31 +166,41 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       </div>
 
       {inputType === "manual" ? (
-        <input className="w-full p-2 border mb-2" placeholder="Insert Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
+        <input
+          className="w-full p-2 border mb-2"
+          placeholder="Insert Client URL or keyword"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
       ) : (
         <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
-          <input type="file" accept=".csv" onChange={handleFileUpload} className="w-full text-center" />
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className="w-full text-center"
+          />
           <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
         </div>
       )}
-      <div className="text-sm mt-1">Select a Language</div>
+
       <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
         <option>English UK</option>
         <option>English US</option>
         <option>Italian</option>
         <option>French</option>
       </select>
-      <div className="text-sm mt-1">Select the Platform</div>
+
       <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
         <option>Facebook</option>
         <option>Google Ads</option>
       </select>
-      <div className="text-sm mt-1">Type of Marketing Objective</div>
+
       <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
         <option>Sales</option>
         <option>Awareness</option>
       </select>
-      <div className="text-sm mt-1">Number of Lines</div>
+
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
         <option value={5}>5</option>
         <option value={10}>10</option>
@@ -200,9 +210,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
         Generate
       </button>
-      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
-        ← Back
-      </button>
+      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>← Back</button>
 
       {loading && (
         <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">

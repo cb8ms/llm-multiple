@@ -1,6 +1,6 @@
 // /components/SEO.js
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SEO() {
@@ -21,7 +21,6 @@ export default function SEO() {
   const [bespokeTitleCharCount, setBespokeTitleCharCount] = useState("");
   const [bespokeDescCharCount, setBespokeDescCharCount] = useState("");
   const [recommendBrandInTitle, setRecommendBrandInTitle] = useState(false);
-
 
   function parseCsvLine(line) {
     const result = [];
@@ -90,34 +89,33 @@ export default function SEO() {
   };
 
   const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
-   let titleCharLimitLabel, descCharLimitLabel;
-  let titleCharLimitMax, descCharLimitMax;
-  let descCharRecommendedMin = 120;
+    let titleCharLimitLabel, descCharLimitLabel;
+    let titleCharLimitMax, descCharLimitMax;
+    let descCharRecommendedMin = 120;
 
+    if (screenSize === "desktop") {
+      titleCharLimitLabel = "55-65 characters or approximately 580px";
+      descCharLimitLabel = "150-160 characters or approximately 920px";
+      titleCharLimitMax = 65;
+      descCharLimitMax = 160;
+    } else if (screenSize === "mobile") {
+      titleCharLimitLabel = "60-75 characters or approximately 580px";
+      descCharLimitLabel = "120-130 characters or approximately 680px";
+      titleCharLimitMax = 130; // Use desc limit for meta
+      descCharLimitMax = 130;
+    } else if (screenSize === "bespoke") {
+      titleCharLimitMax = bespokeTitleCharCount || 65;
+      descCharLimitMax = bespokeDescCharCount || 130;
+      titleCharLimitLabel = `${titleCharLimitMax} `;
+      descCharLimitLabel = `${descCharLimitMax} `;
+    } else {
+      titleCharLimitLabel = "55-65 characters or approximately 580px";
+      descCharLimitLabel = "150-160 characters or approximately 920px";
+      titleCharLimitMax = 65;
+      descCharLimitMax = 160;
+    }
 
-  if (screenSize === "desktop") {
-titleCharLimitLabel = "55-65 characters or approximately 580px";
-    descCharLimitLabel = "150-160 characters or approximately 920px";
-    titleCharLimitMax = 65;
-    descCharLimitMax = 160;
-  } else if (screenSize === "mobile") {
-    titleCharLimitLabel = "60-75 characters or approximately 580px";
-    descCharLimitLabel = "120-130 characters or approximately 680px";
-    titleCharLimitMax = 130; // Use desc limit for meta
-    descCharLimitMax = 130;
-  } else if (screenSize === "bespoke") {
-    titleCharLimitMax = bespokeTitleCharCount || 65;
-    descCharLimitMax = bespokeDescCharCount || 130;
-    titleCharLimitLabel = `${titleCharLimitMax} `;
-    descCharLimitLabel = `${descCharLimitMax} `;
-  } else {
-    titleCharLimitLabel = "55-65 characters or approximately 580px";
-    descCharLimitLabel = "150-160 characters or approximately 920px";
-    titleCharLimitMax = 65;
-    descCharLimitMax = 160;
-  }
-
-  const basePrompt = `You are an SEO expert in writing metadata and must strictly follow the steps below to meet all input requirements. You will provide ${lines} distinct versions of each metadata output.
+    const basePrompt = `You are an SEO expert in writing metadata and must strictly follow the steps below to meet all input requirements. You will provide ${lines} distinct versions of each metadata output.
 
 Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyword}; Brand: ${brand}. Use the tone of voice from the website at ${url}. Write for a ${screenSize.toLowerCase()} display audience in ${language}.
 
@@ -137,8 +135,8 @@ After each title and description, include the character count in brackets, e.g.,
 Begin your output with: For input: ${pKeyword}, and then provide all title and description variations.
 
 `;
-  return basePrompt;
-};
+    return basePrompt;
+  };
 
   const handleSubmit = async () => {
     setResult("");
@@ -216,9 +214,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
           <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
         </div>
       )}
- <div className="text-sm mt-1">
-          Select the Language
-        </div>
+      <div className="text-sm mt-1">Select the Language</div>
       <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
         <option>English UK</option>
         <option>English US</option>
@@ -226,73 +222,46 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         <option>French</option>
         <option>German</option>
       </select>
- <div className="text-sm mt-1">
-          Select the Screen Size
-        </div>
-<select className="w-full p-2 border mb-2" value={screenSize} onChange={(e) => {
-  setscreenSize(e.target.value);
-  if (e.target.value === "bespoke") {
-    setBespokeTitleCharCount("");
-    setBespokeDescCharCount("150-160");
-  } else {
-    setBespokeTitleCharCount("");
-    setBespokeDescCharCount("");
-  }
-}} required>
-  <option value="desktop">Desktop</option>
-  <option value="mobile">Mobile</option>
-  <option value="bespoke">Bespoke</option>
-</select>
-
-{screenSize === "bespoke" && (
-  <div className="mb-2">
-    <div className="mt-2">
-          <div className="text-sm mt-1">
-          Title
-        </div>
-      <input
-        type="number"
-        min={1}
-        max={120}
-        value={bespokeTitleCharCount}
-        onChange={(e) => setBespokeTitleCharCount(e.target.value)}
+      <div className="text-sm mt-1">Select the Screen Size</div>
+      <select
         className="w-full p-2 border mb-2"
-        placeholder="Enter max title character count (max 75)"
-      />
-      {bespokeTitleCharCount > 75 && (
-        <div className="text-red-600 text-sm mt-1">
-          Warning: Title character count cannot exceed 75.
+        value={screenSize}
+        onChange={(e) => {
+          setscreenSize(e.target.value);
+          if (e.target.value === "bespoke") {
+            setBespokeTitleCharCount("");
+            setBespokeDescCharCount("150-160");
+          } else {
+            setBespokeTitleCharCount("");
+            setBespokeDescCharCount("");
+          }
+        }}
+        required
+      >
+        <option value="desktop">Desktop</option>
+        <option value="mobile">Mobile</option>
+        <option value="bespoke">Bespoke</option>
+      </select>
+
+      {screenSize === "bespoke" && (
+        <div className="mb-2">
+          <div className="mt-2">
+            <div className="text-sm mt-1">Title</div>
+            <input type="number" min={1} max={120} value={bespokeTitleCharCount} onChange={(e) => setBespokeTitleCharCount(e.target.value)} className="w-full p-2 border mb-2" placeholder="Enter max title character count (max 75)" />
+            {bespokeTitleCharCount > 75 && <div className="text-red-600 text-sm mt-1">Warning: Title character count cannot exceed 75.</div>}
+            <div className="text-sm mt-1">Meta Description</div>
+            <input type="text" value={bespokeDescCharCount} onChange={(e) => setBespokeDescCharCount(e.target.value)} className="w-full p-2 border" placeholder='Enter max description character count (e.g. "150-160")' />
+            {/* Optional: Add a warning for description char count if you want */}
+          </div>
         </div>
       )}
-          <div className="text-sm mt-1">
-          Meta Description
-        </div>
-      <input
-        type="text"
-        value={bespokeDescCharCount}
-        onChange={(e) => setBespokeDescCharCount(e.target.value)}
-        className="w-full p-2 border"
-        placeholder='Enter max description character count (e.g. "150-160")'
-      />
-      {/* Optional: Add a warning for description char count if you want */}
-    </div>
-  </div>
-)}
-<div className="flex items-center mb-2">
-  <input
-    type="checkbox"
-    id="recommendBrandInTitle"
-    checked={recommendBrandInTitle}
-    onChange={(e) => setRecommendBrandInTitle(e.target.checked)}
-    className="mr-2"
-  />
-  <label htmlFor="recommendBrandInTitle" className="text-sm">
-    Recommend adding the Brand name at the end of Page Titles
-  </label>
-</div>
- <div className="text-sm mt-1">
-          Number of Lines
-        </div>
+      <div className="flex items-center mb-2">
+        <input type="checkbox" id="recommendBrandInTitle" checked={recommendBrandInTitle} onChange={(e) => setRecommendBrandInTitle(e.target.checked)} className="mr-2" />
+        <label htmlFor="recommendBrandInTitle" className="text-sm">
+          Recommend adding the Brand name at the end of Page Titles
+        </label>
+      </div>
+      <div className="text-sm mt-1">Number of Lines</div>
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
         <option value={5}>5</option>
         <option value={10}>10</option>
