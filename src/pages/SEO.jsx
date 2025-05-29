@@ -88,23 +88,14 @@ export default function SEO() {
     }
   };
 
-  const generatePrompt = ({
-  url,
-  pKeyword,
-  sKeyword,
-  brand,
-  screenSize,
-  bespokeTitleCharCount,
-  bespokeDescCharCount,
-  lines,
-  language,
-}) => {
-  let titleCharLimitLabel, descCharLimitLabel;
+  const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
+   let titleCharLimitLabel, descCharLimitLabel;
   let titleCharLimitMax, descCharLimitMax;
-  let descCharRecommendedMin = 115;
+  let descCharRecommendedMin = 120;
+
 
   if (screenSize === "desktop") {
-    titleCharLimitLabel = "55-65 characters or approximately 580px";
+titleCharLimitLabel = "55-65 characters or approximately 580px";
     descCharLimitLabel = "150-160 characters or approximately 920px";
     titleCharLimitMax = 65;
     descCharLimitMax = 160;
@@ -142,11 +133,10 @@ Rules:
 After each title and description, include the character count in brackets, e.g., [121 characters].
 
 Begin your output with: For input: ${pKeyword}, and then provide all title and description variations.
-`;
 
+`;
   return basePrompt;
 };
-
 
   const handleSubmit = async () => {
     setResult("");
