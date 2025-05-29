@@ -88,24 +88,41 @@ export default function SEO() {
     }
   };
 
-  const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
-  let titleCharLimit, descCharLimit;
+  const generatePrompt = ({
+  url,
+  pKeyword,
+  sKeyword,
+  brand,
+  screenSize,
+  bespokeTitleCharCount,
+  bespokeDescCharCount,
+  lines,
+  language,
+}) => {
+  let titleCharLimitLabel, descCharLimitLabel;
+  let titleCharLimitMax, descCharLimitMax;
+  let descCharRecommendedMin = 115;
+
   if (screenSize === "desktop") {
-    titleCharLimit = "55-65 characters or approximately 580px";
-    descCharLimit = "150-160 characters or approximately 920px";
+    titleCharLimitLabel = "55-65 characters or approximately 580px";
+    descCharLimitLabel = "150-160 characters or approximately 920px";
+    titleCharLimitMax = 65;
+    descCharLimitMax = 160;
   } else if (screenSize === "mobile") {
-    titleCharLimit = "60-75 characters or approximately 580px";
-    descCharLimit = "120-130 characters or approximately 680px";
+    titleCharLimitLabel = "60-75 characters or approximately 580px";
+    descCharLimitLabel = "120-130 characters or approximately 680px";
+    titleCharLimitMax = 130; // Use desc limit for meta
+    descCharLimitMax = 130;
   } else if (screenSize === "bespoke") {
-    titleCharLimit = bespokeTitleCharCount
-      ? `${bespokeTitleCharCount} characters (bespoke)`
-      : "";
-    descCharLimit = bespokeDescCharCount
-      ? `${bespokeDescCharCount} characters (bespoke)`
-      : "";
+    titleCharLimitMax = bespokeTitleCharCount || 65;
+    descCharLimitMax = bespokeDescCharCount || 130;
+    titleCharLimitLabel = `${titleCharLimitMax} characters (bespoke)`;
+    descCharLimitLabel = `${descCharLimitMax} characters (bespoke)`;
   } else {
-    titleCharLimit = "55-65 characters or approximately 580px";
-    descCharLimit = "150-160 characters or approximately 920px";
+    titleCharLimitLabel = "55-65 characters or approximately 580px";
+    descCharLimitLabel = "150-160 characters or approximately 920px";
+    titleCharLimitMax = 65;
+    descCharLimitMax = 160;
   }
 
   const basePrompt = `You are an SEO expert in writing metadata and must strictly follow the steps below to meet all input requirements. You will provide ${lines} distinct versions of each metadata output.
@@ -113,21 +130,23 @@ export default function SEO() {
 Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyword}; Brand: ${brand}. Use the tone of voice from the website at ${url}. Write for a ${screenSize.toLowerCase()} display audience in ${language}.
 
 Your task is to write:
-- ${lines} SEO-friendly page titles, each no more than ${titleCharLimit} characters (including spaces).
-- ${lines} meta descriptions, each no more than ${descCharLimit} characters (including spaces).
+- ${lines} page titles, each no more than ${titleCharLimitMax} characters (including spaces), and ideally within 5 characters of that limit.
+- ${lines} meta descriptions, each no more than ${descCharLimitMax} characters (including spaces), and each should use at least ${descCharRecommendedMin} characters. If possible, aim for ${descCharLimitMax} characters for maximum search snippet impact.
 
 Rules:
-1. Maximize character usage: aim to get as close as possible to the character limits without exceeding them. Be creative and natural.
+1. Maximize character usage: Each output should be as close as possible to the allowed character limit without exceeding it. Do not be conservative with length.
 2. Page titles: Do not include the brand name; use a hyphen (-) as a separator, not a pipe (|); place the primary keyword (${pKeyword}) early, and include secondary keyword(s) (${sKeyword}) naturally.
 3. Meta descriptions: Must include the brand name (${brand}); encourage user engagement and click-through; begin with the most important information to preserve meaning if truncated.
 4. Capitalization: All location names must be capitalized (e.g., "london" → "London"); ensure proper nouns like cities, countries, and regions use correct capitalization.
 
-After each title and description, include the character count in brackets, e.g., [71 characters].
+After each title and description, include the character count in brackets, e.g., [121 characters].
 
 Begin your output with: For input: ${pKeyword}, and then provide all title and description variations.
 `;
+
   return basePrompt;
 };
+
 
   const handleSubmit = async () => {
     setResult("");
@@ -250,7 +269,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
       />
       {bespokeTitleCharCount > 75 && (
         <div className="text-red-600 text-sm mt-1">
-          Warning: Title character count cannot exceed 120.
+          Warning: Title character count cannot exceed 75.
         </div>
       )}
           <div className="text-sm mt-1">
