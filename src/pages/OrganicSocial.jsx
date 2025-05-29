@@ -61,7 +61,7 @@ Primary text: 50-150 characters
 Headline: 27 characters 
 
 **Returned format in answer**
-Provide a short paragraph on the reason why this ad copy has been selected followed by a table (column 1 being the format, column 2 the headline, column 3 the primary text). To ensure client satisfaction you will provide 3 options for each placement.
+Provide a short paragraph on the reason why this ad copy has been selected followed by a JSON friendly table (column 1 being the format, column 2 the headline, column 3 the primary text). To ensure client satisfaction you will provide 3 options for each placement.
 
 Input Client:
 Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
