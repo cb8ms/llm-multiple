@@ -123,7 +123,7 @@ Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyw
 
 Your task is to write:
 - ${lines} page titles, each no more than ${titleCharLimitMax} characters (including spaces), and ideally within 5 characters of that limit.
-${recommendBrandInTitle ? "- Where possible, recommend adding the Brand name at the end of the Page Titles.\n" : ""}
+${recommendBrandInTitle ? "- Please do add the Brand name at the end of the Page Titles.\n" : ""}
 - ${lines} meta descriptions, each no more than ${descCharLimitMax} characters (including spaces), and each should use at least ${descCharRecommendedMin} characters. If possible, aim for ${descCharLimitMax} characters for maximum search snippet impact.
 
 Rules:
