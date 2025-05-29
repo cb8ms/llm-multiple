@@ -205,7 +205,9 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
           <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
         </div>
       )}
-
+ <div className="text-sm mt-1">
+          Select the Language
+        </div>
       <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
         <option>English UK</option>
         <option>English US</option>
@@ -213,7 +215,9 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         <option>French</option>
         <option>German</option>
       </select>
-
+ <div className="text-sm mt-1">
+          Select the Screen Size
+        </div>
 <select className="w-full p-2 border mb-2" value={screenSize} onChange={(e) => {
   setscreenSize(e.target.value);
   if (e.target.value === "bespoke") {
@@ -264,7 +268,9 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
   </div>
 )}
 
-
+ <div className="text-sm mt-1">
+          Number of Lines
+        </div>
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
         <option value={5}>5</option>
         <option value={10}>10</option>
