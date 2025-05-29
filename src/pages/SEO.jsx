@@ -96,22 +96,6 @@ export default function SEO() {
   } else if (screenSize === "mobile") {
     titleCharLimit = "60-75 characters or approximately 580px";
     descCharLimit = "120-130 characters or approximately 680px";
-  } else if (screenSize === "bespoke" && useBespoke && bespokeCharCount) {
-    titleCharLimit = `${bespokeCharCount} characters (bespoke)`;
-    descCharLimit = `${bespokeCharCount} characters (bespoke)`;
-  } else {
-    titleCharLimit = "55-65 characters or approximately 580px";
-    descCharLimit = "150-160 characters or approximately 920px";
-  }
-
-  const generatePrompt = ({ url, pKeyword, sKeyword, brand }) => {
-  let titleCharLimit, descCharLimit;
-  if (screenSize === "desktop") {
-    titleCharLimit = "55-65 characters or approximately 580px";
-    descCharLimit = "150-160 characters or approximately 920px";
-  } else if (screenSize === "mobile") {
-    titleCharLimit = "60-75 characters or approximately 580px";
-    descCharLimit = "120-130 characters or approximately 680px";
   } else if (screenSize === "bespoke") {
     titleCharLimit = bespokeTitleCharCount
       ? `${bespokeTitleCharCount} characters (bespoke)`
@@ -273,6 +257,8 @@ When providing the output, say: For input: ${pKeyword} and then provide the rest
     </div>
   </div>
 )}
+
+
       <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
         <option value={5}>5</option>
         <option value={10}>10</option>
