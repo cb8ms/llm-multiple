@@ -28,7 +28,7 @@ export default function SocialMedia() {
 
   const generatePrompt = (input) => {
     if (platform === "Facebook") {
-      return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that ${lines} lines of the ad closely aligns with the request.
+      return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
 
 **Brand & Product/Service Context** 
 Include the brand name in each headline and try and use as many of the available characters as possible
@@ -145,7 +145,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     }
   };
 
- const handleDownloadCSV = () => {
+  const handleDownloadCSV = () => {
     // Sanitize the result by removing unwanted "###" characters
     const sanitizedResult = result.replace(/###/g, "");
 
@@ -172,82 +172,84 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
   return (
-    <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Organic Social Media Marketing Copy Generator</h1>
+    <div className="p-8 mx-auto">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Organic Social Media Marketing Copy Generator</h1>
 
-      <div className="mb-4">
-        <label className="font-semibold mr-4">Choose Input Type:</label>
-        <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
-          <option value="manual">Manual Input</option>
-          <option value="csv">Upload CSV</option>
+        <div className="mb-4">
+          <label className="font-semibold mr-4">Choose Input Type:</label>
+          <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
+            <option value="manual">Manual Input</option>
+            <option value="csv">Upload CSV</option>
+          </select>
+        </div>
+
+        {inputType === "manual" ? (
+          <input
+            className="w-full p-2 border mb-2"
+            placeholder="Insert Client URL or keyword"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+        ) : (
+          <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              className="w-full text-center"
+            />
+            <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
+          </div>
+        )}
+
+        <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
+          <option>English UK</option>
+          <option>English US</option>
+          <option>Italian</option>
+          <option>French</option>
         </select>
+
+        <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
+          <option>Facebook</option>
+          <option>Google Ads</option>
+        </select>
+
+        <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
+          <option>Sales</option>
+          <option>Awareness</option>
+        </select>
+
+        <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={15}>15</option>
+        </select>
+
+        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
+          Generate
+        </button>
+        <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>← Back</button>
+
+        {loading && (
+          <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
+            <svg className="animate-spin h-4 w-4 text-blue-600 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Working on it… ({progress.current}/{progress.total})
+          </div>
+        )}
       </div>
 
-      {inputType === "manual" ? (
-        <input
-          className="w-full p-2 border mb-2"
-          placeholder="Insert Client URL or keyword"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
-      ) : (
-        <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
-          <input
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            className="w-full text-center"
-          />
-          <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
-        </div>
-      )}
-
-      <select className="w-full p-2 border mb-2" value={language} onChange={(e) => setLanguage(e.target.value)}>
-        <option>English UK</option>
-        <option>English US</option>
-        <option>Italian</option>
-        <option>French</option>
-      </select>
-
-      <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
-        <option>Facebook</option>
-        <option>Google Ads</option>
-      </select>
-
-      <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
-        <option>Sales</option>
-        <option>Awareness</option>
-      </select>
-
-      <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
-        <option value={5}>5</option>
-        <option value={10}>10</option>
-        <option value={15}>15</option>
-      </select>
-
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit} disabled={loading}>
-        Generate
-      </button>
-      <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>← Back</button>
-
-      {loading && (
-        <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
-          <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-          </svg>
-          Working on it… ({progress.current}/{progress.total})
-        </div>
-      )}
-
       {result && (
-  <div className="mt-4 max-w-5xl mx-auto">
-    <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
-    <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
-      Download CSV
-    </button>
-  </div>
-)}
+        <div className="mt-4 max-w-5xl mx-auto">
+          <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{result}</pre>
+          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
+            Download CSV
+          </button>
+        </div>
+      )}
     </div>
   );
 }
