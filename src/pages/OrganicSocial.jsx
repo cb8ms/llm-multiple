@@ -172,7 +172,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-8 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Organic Social Media Marketing Copy Generator</h1>
 
       <div className="mb-4">
