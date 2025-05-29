@@ -30,7 +30,7 @@ export default function SocialMedia() {
  const generatePrompt = (input) => {
   if (platform === "Facebook") {
     let emojiRequirement = "";
-    if (emoji !== "false") {
+    if (emoji === "true") {
       emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence.\n`;
     }
     return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
