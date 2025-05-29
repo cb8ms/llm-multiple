@@ -108,24 +108,24 @@ export default function SEO() {
     descCharLimit = "150-160 characters or approximately 920px";
   }
 
-  const basePrompt = `You are an SEO expert in writing metadata and you will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs:
+  const basePrompt = `You are an SEO expert in writing metadata and must strictly follow the steps below to meet all input requirements. You will provide ${lines} distinct versions of each metadata output.
 
-- URL: ${url}
-- Primary Keyword: ${pKeyword}
-- Secondary Keyword(s): ${sKeyword}
-- Brand: ${brand}
+Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyword}; Brand: ${brand}. Use the tone of voice from the website at ${url}. Write for a ${screenSize.toLowerCase()} display audience in ${language}.
 
-Using the ${url} as the website URL for Tone of Voice.
+Your task is to write:
+- ${lines} SEO-friendly page titles, each no more than ${titleCharLimit} characters (including spaces).
+- ${lines} meta descriptions, each no more than ${descCharLimit} characters (including spaces).
 
-Please provide me with ${screenSize.toLowerCase()} friendly ${lines} page titles in ${language} that don't exceed a maximum length of ${titleCharLimit} wide also for Meta descriptions don't exceed a maximum length of ${descCharLimit} wide.
+Rules:
+1. Maximize character usage: aim to get as close as possible to the character limits without exceeding them. Be creative and natural.
+2. Page titles: Do not include the brand name; use a hyphen (-) as a separator, not a pipe (|); place the primary keyword (${pKeyword}) early, and include secondary keyword(s) (${sKeyword}) naturally.
+3. Meta descriptions: Must include the brand name (${brand}); encourage user engagement and click-through; begin with the most important information to preserve meaning if truncated.
+4. Capitalization: All location names must be capitalized (e.g., "london" → "London"); ensure proper nouns like cities, countries, and regions use correct capitalization.
 
-Write the titles and meta descriptions for the ${brand} by using the ${pKeyword} as the primary Keyword but also ${sKeyword} as your secondary Keyword(s), in a way that will entice the user to click through including the brand in the meta description but not in the title. Please include the number of characters, including spaces, in brackets after each response.
+After each title and description, include the character count in brackets, e.g., [71 characters].
 
-Ensure that the most important information is included first in both titles and descriptions so that if search engines truncate these, the right context is still provided to users.
-
-Page titles should also use a hyphen (-) separator rather than a pipe (|) separator.
-
-When providing the output, say: For input: ${pKeyword} and then provide the rest of the output.`;
+Begin your output with: For input: ${pKeyword}, and then provide all title and description variations.
+`;
   return basePrompt;
 };
 
