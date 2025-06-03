@@ -43,14 +43,14 @@ The objective of the ads is to ${objective}
 If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
 If it is Awareness then you will generate awareness for the product.
 
-#########
+--------
 
 Facebook prompt:
 1. Hook/Opening Line: Must capture attention quickly within the primary text
 2. Do not exceed the character limit below in the output format
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
 
-**Output Format**
+Output Format:
 Provide the following formats below clearly annotating which ad text is for the placement
 
 1. Image Facebook Feed
