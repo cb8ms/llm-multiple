@@ -167,32 +167,45 @@ const handleDownloadXLSX = async () => {
 
     // We'll accumulate data rows here as arrays
     const dataRows = [];
+blocks.forEach((block) => {
+  const lines = block.split("\n");
+  let currentChannel = "";
+  let primary = "";
+  let headline = "";
 
-    blocks.forEach((block) => {
-      const lines = block.split("\n");
-      let currentChannel = "";
-      let primary = "";
-      let headline = "";
+  lines.forEach((line) => {
+    const trimmed = line.trim();
 
-      lines.forEach((line) => {
-        const trimmed = line.trim();
-        if (/\*\*.*\*\*/.test(trimmed)) return; // skip bold titles
+    // Match both ### and ** styles for channel
+    if (/^(###|\*\*\d+\.)/.test(trimmed)) {
+      currentChannel = trimmed
+        .replace(/^###/, "")
+        .replace(/^\*\*\d+\./, "")
+        .replace(/\*\*/g, "")
+        .trim();
+    }
 
-        if (trimmed.startsWith("###")) {
-          currentChannel = trimmed.replace("###", "").trim();
-        } else if (trimmed.startsWith("- Primary text:")) {
-          primary = trimmed.replace("- Primary text:", "").trim();
-        } else if (trimmed.startsWith("- Headline:")) {
-          headline = trimmed.replace("- Headline:", "").trim();
-          // Push row once we have headline (end of a record)
-          if (currentChannel && primary && headline) {
-            dataRows.push(["", currentChannel, primary, headline]);
-            primary = "";
-            headline = "";
-          }
-        }
-      });
-    });
+    // Match Primary text line
+    if (trimmed.match(/- \*{0,2}Primary text:?\*{0,2}/)) {
+      primary = trimmed
+        .replace(/- \*{0,2}Primary text:?\*{0,2}/, "")
+        .trim();
+    }
+
+    // Match Headline line
+    if (trimmed.match(/- \*{0,2}Headline:?\*{0,2}/)) {
+      headline = trimmed
+        .replace(/- \*{0,2}Headline:?\*{0,2}/, "")
+        .trim();
+
+      if (currentChannel && primary && headline) {
+        dataRows.push(["", currentChannel, primary, headline]);
+        primary = "";
+        headline = "";
+      }
+    }
+  });
+});
 
     // Get current range
     const range = XLSX.utils.decode_range(sheet["!ref"]);
