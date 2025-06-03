@@ -185,33 +185,38 @@ const handleDownloadXLSX = async () => {
 
     blocks.forEach((block) => {
       const lines = block.split("\n");
-      let currentChannel = "";
+      let currentChannel = null; // Placement name (e.g., Image Facebook Feed)
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
 
-        if (/^(###|\*\*\d+\.)/.test(line)) {
-          currentChannel = line
-            .replace(/^###/, "")
-            .replace(/^\*\*\d+\./, "")
-            .replace(/^\d+\./, "")
-            .replace(/\*\*/g, "")
-            .trim();
+        // Skip lines like ### Version N
+        if (/^###\s*Version\s*\d+/i.test(line)) {
+          continue; // ignore version heading
         }
 
-        if (/^[-\*]\s*\*{0,2}Primary text:/.test(line)) {
-          const primary = line.replace(/^[-\*]\s*\*{0,2}Primary text:\*{0,2}/, "").trim();
+        // Detect placement name like "1. **Image Facebook Feed**"
+        const placementMatch = line.match(/^\d+\.\s*\*\*(.+)\*\*/);
+        if (placementMatch) {
+          currentChannel = placementMatch[1].trim();
+          continue;
+        }
+
+        // Detect primary text line
+        if (/^[-*]\s*\*{0,2}Primary text:/.test(line)) {
+          const primary = line.replace(/^[-*]\s*\*{0,2}Primary text:\*{0,2}/, "").trim();
           const nextLine = lines[i + 1]?.trim();
 
-          if (nextLine && /^[-\*]\s*\*{0,2}Headline:/.test(nextLine)) {
-            const headline = nextLine.replace(/^[-\*]\s*\*{0,2}Headline:\*{0,2}/, "").trim();
+          if (nextLine && /^[-*]\s*\*{0,2}Headline:/.test(nextLine)) {
+            const headline = nextLine.replace(/^[-*]\s*\*{0,2}Headline:\*{0,2}/, "").trim();
 
             if (currentChannel && primary && headline) {
+              // Prepare row: ["", Channel, "", Primary, "", Headline]
               const row = ["", currentChannel, "", primary, "", headline];
               dataRows.push(row);
               console.log("📄 Parsed row:", row);
             }
-            i++; // skip headline line
+            i++; // Skip headline line
           }
         }
       }
@@ -229,10 +234,9 @@ const handleDownloadXLSX = async () => {
     const startRow = 9; // Excel row 10 (0-indexed)
     dataRows.forEach((row, i) => {
       const r = startRow + i;
-      // Columns: B=1, D=3, F=5
-      const channelCellAddr = XLSX.utils.encode_cell({ r, c: 1 });
-      const primaryCellAddr = XLSX.utils.encode_cell({ r, c: 3 });
-      const headlineCellAddr = XLSX.utils.encode_cell({ r, c: 5 });
+      const channelCellAddr = XLSX.utils.encode_cell({ r, c: 1 }); // Col B
+      const primaryCellAddr = XLSX.utils.encode_cell({ r, c: 3 }); // Col D
+      const headlineCellAddr = XLSX.utils.encode_cell({ r, c: 5 }); // Col F
 
       const channelCell = sheet[channelCellAddr];
       const primaryCell = sheet[primaryCellAddr];
@@ -252,7 +256,7 @@ const handleDownloadXLSX = async () => {
     const originalRange = XLSX.utils.decode_range(sheet["!ref"]);
     const endRow = startRow + dataRows.length - 1;
     const newEndRow = Math.max(originalRange.e.r, endRow);
-    const newEndCol = Math.max(originalRange.e.c, 5); // column F is 5
+    const newEndCol = Math.max(originalRange.e.c, 5); // col F = 5
 
     sheet["!ref"] = XLSX.utils.encode_range({
       s: originalRange.s,
@@ -275,6 +279,7 @@ const handleDownloadXLSX = async () => {
     alert("Could not export Excel. See console for details.");
   }
 };
+
 
 
 
