@@ -223,13 +223,13 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         </div>
         {inputType === "manual" ? (
           <>
-            <input className="w-full p-2 border mb-2" placeholder="Insert Client URL" value={url} onChange={(e) => setUrl(e.target.value)} />
+            <input className="w-full p-2 border mb-2 mt-2" placeholder="Insert Client URL" value={url} onChange={(e) => setUrl(e.target.value)} />
             <input className="w-full p-2 border mb-2" placeholder="Insert Primary keyword" value={pKeyword} onChange={(e) => setPkeyword(e.target.value)} />
             <input className="w-full p-2 border mb-2" placeholder="Insert Secondary keywords.(If more then one,use comma to separate them)" value={sKeyword} onChange={(e) => setsKeyword(e.target.value)} />
             <input className="w-full p-2 border mb-2" placeholder="Insert Client Brand name here" value={brand} onChange={(e) => setBrand(e.target.value)} />
           </>
         ) : (
-          <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
+          <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center mt-2">
             <input type="file" accept=".csv" onChange={handleFileUpload} className="w-full text-center" />
             <p className="mt-2 text-gray-600">Upload a CSV file containing URLs or keywords.</p>
           </div>
@@ -305,7 +305,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         )}
       </div>
       {result && (
-        <div className="mt-2 w-full max-w-4xl mx-auto">
+        <div className="mt-2 w-full max-w-3xl mx-auto">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full text-base">{result}</pre>
           <button className="mt-2 mb-5 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
             Download CSV
