@@ -13,7 +13,7 @@ export default function PaidMedia() {
   const [lines, setLines] = useState(5);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
+
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -105,7 +105,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   const handleSubmit = async () => {
     setResult("");
     setLoading(true);
-    setProgress({ current: 0, total: 0 });
+   
 
     try {
       const inputs =
@@ -116,7 +116,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
               .filter(Boolean)
           : [url];
 
-      setProgress({ current: 0, total: inputs.length });
+
 
       if (inputType === "csv") {
         // Batch processing for CSV input
@@ -124,7 +124,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
         const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy-batch", { prompts }, { headers: { "Content-Type": "application/json" } });
         const allResults = response.data.responses.map((res, i) => `For input: ${inputs[i]}\n${res}\n`);
         setResult(allResults.join("\n=========================\n\n"));
-        setProgress({ current: prompts.length, total: prompts.length });
+
       } else {
         // Manual input (single request)
         const prompt = generatePrompt(url);
@@ -134,7 +134,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
         } else {
           setResult(`For input: ${url}\nNo output received.\n`);
         }
-        setProgress({ current: 1, total: 1 });
+
       }
     } catch (err) {
       setResult("Error generating content.");
@@ -212,7 +212,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
           </svg>
-          Working on it… ({progress.current}/{progress.total})
+          Working on it… 
         </div>
       )}
 
