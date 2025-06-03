@@ -200,9 +200,9 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
       <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
       <div className="text-base mt-1">Instructions</div>
       <div className="text-sm">
-        <p className="mt-1">First select the type of input, if selecting CSV for Bulk upload, please download <a className="font-bold" href="https://docs.google.com/spreadsheets/d/1jt1pljedbNNdzBHes-lONTYTTdZvDSrHdhjWatfP6CE/edit?gid=0#gid=0">THIS TEMPLATE</a> </p>
+        <p className="mt-1">First select the type of input, if selecting CSV for Bulk upload, please download <a className="font-bold" href="https://docs.google.com/spreadsheets/d/1jt1pljedbNNdzBHes-lONTYTTdZvDSrHdhjWatfP6CE/edit?gid=0#gid=0" target="_blank">THIS TEMPLATE</a> </p>
         <p className="mt-1">Click on File, Download and than select Comma-separated values (.csv) </p>
-      <p className="mt-1">Please note that currently the maximum that can be uploaded at once is 70 lines on the CSV file. If it is more then 70, please use multiple sheets.</p></div>
+      <p className="mt-1 mb-4">Please note that currently the maximum that can be uploaded at once is 70 lines on the CSV file. If it is more then 70, please use multiple sheets.</p></div>
       <div className="mb-4">
         <label className="font-semibold mr-4">Choose Input Type:</label>
         <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
