@@ -139,93 +139,94 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     }
   };
 
-  const handleDownloadXLSX = async () => {
-    // Dynamically load SheetJS from CDN if not already loaded (for Vercel/browser)
-    let XLSX = window.XLSX;
-    if (!XLSX) {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js";
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-      XLSX = window.XLSX;
-    }
+const handleDownloadXLSX = async () => {
+  let XLSX = window.XLSX;
+  if (!XLSX) {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js";
+      script.onload = resolve;
+      script.onerror = reject;
+      document.body.appendChild(script);
+    });
+    XLSX = window.XLSX;
+  }
 
-    // Use your template from /public (must be deployed there)
-    const templateUrl = "https://3lyugptmqjzdmrw9.public.blob.vercel-storage.com/Ad%20Copy%20Template%20-%20GDN%20and%20Meta-4vnFzpbbHh3FlAFLcmgwerhHbjZS8K.xlsx";
+  const templateUrl = "https://3lyugptmqjzdmrw9.public.blob.vercel-storage.com/Ad%20Copy%20Template%20-%20GDN%20and%20Meta-4vnFzpbbHh3FlAFLcmgwerhHbjZS8K.xlsx";
 
-    try {
-      const response = await fetch(templateUrl);
-      const arrayBuffer = await response.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+  try {
+    const response = await fetch(templateUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
 
-      // Find the first empty row
-      const range = XLSX.utils.decode_range(sheet['!ref']);
-      let rowNum = range.e.r + 1;
+    // Parse result into blocks (each block = one input result)
+    const blocks = result.split("\n=========================\n\n").filter(Boolean);
 
-      // Parse your result string into rows
-      const blocks = result.split("\n=========================\n\n").filter(Boolean);
+    // We'll accumulate data rows here as arrays
+    const dataRows = [];
 
-      blocks.forEach((block) => {
-        const lines = block.split("\n");
-        let currentChannel = "";
-        let primary = "";
-        let headline = "";
+    blocks.forEach((block) => {
+      const lines = block.split("\n");
+      let currentChannel = "";
+      let primary = "";
+      let headline = "";
 
-        lines.forEach((line) => {
-          const trimmed = line.trim();
-          if (/\*\*.*\*\*/.test(trimmed)) return; // skip bold titles
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (/\*\*.*\*\*/.test(trimmed)) return; // skip bold titles
 
-          // Detect channel (e.g., ### Image Facebook Feed)
-          if (trimmed.startsWith("###")) {
-            currentChannel = trimmed.replace("###", "").trim();
+        if (trimmed.startsWith("###")) {
+          currentChannel = trimmed.replace("###", "").trim();
+        } else if (trimmed.startsWith("- Primary text:")) {
+          primary = trimmed.replace("- Primary text:", "").trim();
+        } else if (trimmed.startsWith("- Headline:")) {
+          headline = trimmed.replace("- Headline:", "").trim();
+          // Push row once we have headline (end of a record)
+          if (currentChannel && primary && headline) {
+            dataRows.push(["", currentChannel, primary, headline]);
+            primary = "";
+            headline = "";
           }
-          if (trimmed.startsWith("- Primary text:")) {
-            primary = trimmed.replace("- Primary text:", "").trim();
-          }
-          if (trimmed.startsWith("- Headline:")) {
-            headline = trimmed.replace("- Headline:", "").trim();
-            if (currentChannel && primary && headline) {
-              // Write to the next empty row
-              sheet[`A${rowNum}`] = { t: "s", v: "" }; // Adjust columns as needed
-              sheet[`B${rowNum}`] = { t: "s", v: currentChannel };
-              sheet[`C${rowNum}`] = { t: "s", v: primary };
-              sheet[`D${rowNum}`] = { t: "s", v: headline };
-              rowNum++;
-              primary = "";
-              headline = "";
-            }
-          }
-        });
+        }
       });
+    });
 
-      // Update the sheet range
-      sheet['!ref'] = XLSX.utils.encode_range({
-        s: { c: 0, r: 0 },
-        e: { c: 3, r: rowNum - 1 }
-      });
+    // Get current range
+    const range = XLSX.utils.decode_range(sheet["!ref"]);
+    // Append rows after the last row of the sheet
+    const startRow = range.e.r + 1;
 
-      const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-      const blob = new Blob([wbout], { type: "application/octet-stream" });
-      const url = URL.createObjectURL(blob);
+    // Add rows using sheet_add_aoa starting from the next empty row
+    XLSX.utils.sheet_add_aoa(sheet, dataRows, { origin: { r: startRow, c: 0 } });
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "AdCopyFilled.xlsx";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Failed to export Excel:", err);
-      alert("Could not export Excel. See console for details.");
-    }
-  };
+    // Update sheet range
+    const newEndRow = startRow + dataRows.length - 1;
+    sheet["!ref"] = XLSX.utils.encode_range({
+      s: { c: 0, r: 0 },
+      e: { c: 3, r: newEndRow },
+    });
+
+    // Write and download
+    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "AdCopyFilled.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Failed to export Excel:", err);
+    alert("Could not export Excel. See console for details.");
+  }
+};
+
 
   return (
     <>
