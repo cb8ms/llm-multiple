@@ -248,10 +248,15 @@ const handleDownloadXLSX = async () => {
       else sheet[headlineCellAddr] = { t: "s", v: row[5] };
     });
 
+    // Preserve original start of sheet range, extend only if needed
+    const originalRange = XLSX.utils.decode_range(sheet["!ref"]);
     const endRow = startRow + dataRows.length - 1;
+    const newEndRow = Math.max(originalRange.e.r, endRow);
+    const newEndCol = Math.max(originalRange.e.c, 5); // column F is 5
+
     sheet["!ref"] = XLSX.utils.encode_range({
-      s: { c: 1, r: startRow },
-      e: { c: 5, r: endRow },
+      s: originalRange.s,
+      e: { c: newEndCol, r: newEndRow },
     });
 
     const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
@@ -270,6 +275,7 @@ const handleDownloadXLSX = async () => {
     alert("Could not export Excel. See console for details.");
   }
 };
+
 
 
   return (
