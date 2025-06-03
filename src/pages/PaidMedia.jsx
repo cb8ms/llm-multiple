@@ -139,7 +139,7 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
 const handleDownloadXLSX = async () => {
-  const templateUrl = "https://github.com/cb8ms/llm-multiple/raw/refs/heads/main/public/Ad%20Copy%20Template%20-%20GDN%20and%20Meta.xlsx";
+  const templateUrl = "https://3lyugptmqjzdmrw9.public.blob.vercel-storage.com/Ad%20Copy%20Template%20-%20GDN%20and%20Meta-4vnFzpbbHh3FlAFLcmgwerhHbjZS8K.xlsx";
 
   try {
     const response = await fetch(templateUrl);
