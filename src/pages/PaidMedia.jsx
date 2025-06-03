@@ -152,7 +152,7 @@ const handleDownloadXLSX = async () => {
     XLSX = window.XLSX;
   }
 
-  const templateUrl = "https://github.com/cb8ms/llm-multiple/blob/88cf6d619d96dbcb2ba14faa9bf35143e24a7bef/public/Ad%20Copy%20Template%20-%20GDN%20and%20Meta.xlsx";
+  const templateUrl = "https://docs.google.com/spreadsheets/d/1xleMy5Xt4bAXRjni7vQOYX6ILgVWqhom/export?format=xlsx";
 
   try {
     const response = await fetch(templateUrl);
