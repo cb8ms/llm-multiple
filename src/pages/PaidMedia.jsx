@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
 
 export default function PaidMedia() {
   const navigate = useNavigate();
@@ -137,31 +138,73 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     }
   };
 
-  const handleDownloadCSV = () => {
-    // Sanitize the result by removing unwanted "###" characters
-    const sanitizedResult = result.replace(/###/g, "");
+const handleDownloadXLSX = async () => {
+  const templateUrl = "https://github.com/cb8ms/llm-multiple/raw/refs/heads/main/public/Ad%20Copy%20Template%20-%20GDN%20and%20Meta.xlsx";
 
-    const blocks = sanitizedResult.split("\n=========================\n\n").filter(Boolean);
-    const csvRows = [];
+  try {
+    const response = await fetch(templateUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+    const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    const blocks = result
+      .split("\n=========================\n\n")
+      .filter(Boolean);
+
+    let newRows = [];
 
     blocks.forEach((block) => {
-      const lines = block.split("\n").filter(Boolean); // Split block into lines
+      const lines = block.split("\n");
+      let currentChannel = "";
+      let primary = "";
+      let headline = "";
+
       lines.forEach((line) => {
-        const safe = line.replace(/"/g, '""'); // Escape double quotes for CSV
-        csvRows.push(`"${safe}"`); // Add each line as a separate row
+        const trimmed = line.trim();
+        if (/\*\*.*\*\*/.test(trimmed)) return; // skip bold titles
+
+        if (trimmed.startsWith("1. ") || trimmed.startsWith("2. ") || trimmed.startsWith("3. ") || trimmed.startsWith("4. ")) {
+          currentChannel = trimmed.slice(trimmed.indexOf(" ") + 1);
+        }
+        if (trimmed.startsWith("- Primary text:")) {
+          primary = trimmed.replace("- Primary text:", "").trim();
+        }
+        if (trimmed.startsWith("- Headline:")) {
+          headline = trimmed.replace("- Headline:", "").trim();
+          if (currentChannel && primary && headline) {
+            newRows.push(["", currentChannel, primary, headline]);
+            primary = "";
+            headline = "";
+          }
+        }
       });
     });
 
-    // Add BOM to ensure proper encoding
-    const csvContent = "\uFEFF" + csvRows.join("\n");
-    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+    // Append new rows to the data
+    const updatedData = [...data, ...newRows];
+    const updatedSheet = XLSX.utils.aoa_to_sheet(updatedData);
+    workbook.Sheets[sheetName] = updatedSheet;
+
+    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "marketing-copy.csv");
+    link.href = url;
+    link.download = "AdCopyFilled.xlsx";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Failed to export Excel:", err);
+    alert("Could not export Excel. See console for details.");
+  }
+};
 
   return (
     <>
@@ -242,9 +285,10 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
       {result && (
         <div className="mt-2 w-full max-w-3xl mx-auto mb-6">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full">{result}</pre>
-          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
-            Download CSV
-          </button>
+<button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadXLSX}>
+  Download XLSX
+</button>
+
         </div>
       )}
     </>
