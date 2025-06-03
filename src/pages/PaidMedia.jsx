@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// REMOVE static import if you deploy to Vercel and use CDN dynamic import instead
-// import * as XLSX from "xlsx";
 
 export default function PaidMedia() {
   const navigate = useNavigate();
@@ -140,141 +138,49 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
   };
 
   const handleDownloadXLSX = async () => {
-    let XLSX = window.XLSX;
-    if (!XLSX) {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js";
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-      XLSX = window.XLSX;
+    if (!result || result.trim() === "") {
+      alert("No generated content to export.");
+      return;
     }
 
-    const templateUrl = "https://docs.google.com/spreadsheets/d/1xleMy5Xt4bAXRjni7vQOYX6ILgVWqhom/export?format=xlsx";
-
     try {
-      const response = await fetch(templateUrl);
+      setLoading(true);
+
+      // Send the LLM output (the generated ad copy) to your backend export endpoint
+      const response = await fetch("https://llm-backend-82gd.onrender.com/api/export-xlsx", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ llm_output: result }),
+      });
+
       if (!response.ok) {
-        throw new Error(`Failed to fetch template: ${response.status} ${response.statusText}`);
-      }
-      console.log("✅ Template fetched successfully:", templateUrl);
-
-      const arrayBuffer = await response.arrayBuffer();
-      console.log("✅ Template size (bytes):", arrayBuffer.byteLength);
-      if (arrayBuffer.byteLength < 100) {
-        alert("Template file is too small or empty.");
+        const errorText = await response.text();
+        alert("Export failed: " + errorText);
+        setLoading(false);
         return;
       }
 
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
-      console.log("✅ Workbook loaded. Sheets:", workbook.SheetNames);
+      // Receive the XLSX file blob
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
 
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      console.log("✅ Initial sheet range:", sheet["!ref"]);
+      // Create a temporary link to trigger download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "AdCopyFilled.xlsx";
+      document.body.appendChild(a);
+      a.click();
 
-      if (!sheet || !sheet["!ref"]) {
-        alert("Template loaded but contains no usable content.");
-        return;
-      }
-
-      const blocks = result.split("\n=========================\n\n").filter(Boolean);
-      const dataRows = [];
-
-      blocks.forEach((block) => {
-        const lines = block.split("\n");
-        let currentChannel = null; // Placement name
-
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i].trim();
-
-          // Skip lines like ### Version N
-          if (/^###\s*Version\s*\d+/i.test(line)) {
-            continue;
-          }
-
-          // Match lines like "**1. Image Facebook Feed**"
-          const placementMatch = line.match(/^\*\*\s*\d+\.\s*(.+?)\s*\*\*/);
-          if (placementMatch) {
-            currentChannel = placementMatch[1].trim();
-            continue;
-          }
-
-          if (/^[-*]?\s*Primary text:/i.test(line)) {
-            const primary = line.replace(/^[-*]?\s*Primary text:/i, "").trim();
-            const nextLine = lines[i + 1]?.trim();
-
-            if (nextLine && /^[-*]?\s*Headline:/i.test(nextLine)) {
-              const headline = nextLine.replace(/^[-*]?\s*Headline:/i, "").trim();
-
-              if (currentChannel && primary && headline) {
-                const row = ["", currentChannel, "", primary, "", headline];
-                dataRows.push(row);
-                console.log("📄 Parsed row:", row);
-              }
-              i++;
-            }
-          }
-        }
-      });
-
-      if (dataRows.length === 0) {
-        alert("No rows were parsed. Check LLM output format.");
-        console.warn("Empty result. Raw block:\n", result);
-        return;
-      }
-
-      console.table(dataRows.slice(0, 5));
-
-      // Value-only update for preserving formatting
-      const startRow = 9; // Excel row 10 (0-indexed)
-      dataRows.forEach((row, i) => {
-        const r = startRow + i;
-        const channelCellAddr = XLSX.utils.encode_cell({ r, c: 1 }); // Col B
-        const primaryCellAddr = XLSX.utils.encode_cell({ r, c: 3 }); // Col D
-        const headlineCellAddr = XLSX.utils.encode_cell({ r, c: 5 }); // Col F
-
-        const channelCell = sheet[channelCellAddr];
-        const primaryCell = sheet[primaryCellAddr];
-        const headlineCell = sheet[headlineCellAddr];
-
-        if (channelCell) channelCell.v = row[1];
-        else sheet[channelCellAddr] = { t: "s", v: row[1] };
-
-        if (primaryCell) primaryCell.v = row[3];
-        else sheet[primaryCellAddr] = { t: "s", v: row[3] };
-
-        if (headlineCell) headlineCell.v = row[5];
-        else sheet[headlineCellAddr] = { t: "s", v: row[5] };
-      });
-
-      // Preserve original start of sheet range, extend only if needed
-      const originalRange = XLSX.utils.decode_range(sheet["!ref"]);
-      const endRow = startRow + dataRows.length - 1;
-      const newEndRow = Math.max(originalRange.e.r, endRow);
-      const newEndCol = Math.max(originalRange.e.c, 5); // col F = 5
-
-      sheet["!ref"] = XLSX.utils.encode_range({
-        s: originalRange.s,
-        e: { c: newEndCol, r: newEndRow },
-      });
-
-      const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-      const blob = new Blob([wbout], { type: "application/octet-stream" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "AdCopyFilled.xlsx";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("❌ Failed to export Excel:", err);
-      alert("Could not export Excel. See console for details.");
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export error:", error);
+      alert("Failed to export XLSX. See console for details.");
+    } finally {
+      setLoading(false);
     }
   };
 
