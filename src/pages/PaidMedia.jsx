@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx";
+// REMOVE static import if you deploy to Vercel and use CDN dynamic import instead
+// import * as XLSX from "xlsx";
 
 export default function PaidMedia() {
   const navigate = useNavigate();
@@ -138,73 +139,93 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     }
   };
 
-const handleDownloadXLSX = async () => {
-  const templateUrl = "https://3lyugptmqjzdmrw9.public.blob.vercel-storage.com/Ad%20Copy%20Template%20-%20GDN%20and%20Meta-4vnFzpbbHh3FlAFLcmgwerhHbjZS8K.xlsx";
-
-  try {
-    const response = await fetch(templateUrl);
-    const arrayBuffer = await response.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: "array" });
-
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-
-    const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-    const blocks = result
-      .split("\n=========================\n\n")
-      .filter(Boolean);
-
-    let newRows = [];
-
-    blocks.forEach((block) => {
-      const lines = block.split("\n");
-      let currentChannel = "";
-      let primary = "";
-      let headline = "";
-
-      lines.forEach((line) => {
-        const trimmed = line.trim();
-        if (/\*\*.*\*\*/.test(trimmed)) return; // skip bold titles
-
-        if (trimmed.startsWith("1. ") || trimmed.startsWith("2. ") || trimmed.startsWith("3. ") || trimmed.startsWith("4. ")) {
-          currentChannel = trimmed.slice(trimmed.indexOf(" ") + 1);
-        }
-        if (trimmed.startsWith("- Primary text:")) {
-          primary = trimmed.replace("- Primary text:", "").trim();
-        }
-        if (trimmed.startsWith("- Headline:")) {
-          headline = trimmed.replace("- Headline:", "").trim();
-          if (currentChannel && primary && headline) {
-            newRows.push(["", currentChannel, primary, headline]);
-            primary = "";
-            headline = "";
-          }
-        }
+  const handleDownloadXLSX = async () => {
+    // Dynamically load SheetJS from CDN if not already loaded (for Vercel/browser)
+    let XLSX = window.XLSX;
+    if (!XLSX) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
       });
-    });
+      XLSX = window.XLSX;
+    }
 
-    // Append new rows to the data
-    const updatedData = [...data, ...newRows];
-    const updatedSheet = XLSX.utils.aoa_to_sheet(updatedData);
-    workbook.Sheets[sheetName] = updatedSheet;
+    // Use your template from /public (must be deployed there)
+    const templateUrl = "/Ad Copy Template - GDN and Meta.xlsx";
 
-    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([wbout], { type: "application/octet-stream" });
-    const url = URL.createObjectURL(blob);
+    try {
+      const response = await fetch(templateUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "AdCopyFilled.xlsx";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("Failed to export Excel:", err);
-    alert("Could not export Excel. See console for details.");
-  }
-};
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+
+      // Find the first empty row
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+      let rowNum = range.e.r + 1;
+
+      // Parse your result string into rows
+      const blocks = result.split("\n=========================\n\n").filter(Boolean);
+
+      blocks.forEach((block) => {
+        const lines = block.split("\n");
+        let currentChannel = "";
+        let primary = "";
+        let headline = "";
+
+        lines.forEach((line) => {
+          const trimmed = line.trim();
+          if (/\*\*.*\*\*/.test(trimmed)) return; // skip bold titles
+
+          // Detect channel (e.g., ### Image Facebook Feed)
+          if (trimmed.startsWith("###")) {
+            currentChannel = trimmed.replace("###", "").trim();
+          }
+          if (trimmed.startsWith("- Primary text:")) {
+            primary = trimmed.replace("- Primary text:", "").trim();
+          }
+          if (trimmed.startsWith("- Headline:")) {
+            headline = trimmed.replace("- Headline:", "").trim();
+            if (currentChannel && primary && headline) {
+              // Write to the next empty row
+              sheet[`A${rowNum}`] = { t: "s", v: "" }; // Adjust columns as needed
+              sheet[`B${rowNum}`] = { t: "s", v: currentChannel };
+              sheet[`C${rowNum}`] = { t: "s", v: primary };
+              sheet[`D${rowNum}`] = { t: "s", v: headline };
+              rowNum++;
+              primary = "";
+              headline = "";
+            }
+          }
+        });
+      });
+
+      // Update the sheet range
+      sheet['!ref'] = XLSX.utils.encode_range({
+        s: { c: 0, r: 0 },
+        e: { c: 3, r: rowNum - 1 }
+      });
+
+      const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([wbout], { type: "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "AdCopyFilled.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to export Excel:", err);
+      alert("Could not export Excel. See console for details.");
+    }
+  };
 
   return (
     <>
@@ -274,7 +295,7 @@ const handleDownloadXLSX = async () => {
 
         {loading && (
           <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
-            <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin h-4 w-4 text-blue-600 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
             </svg>
@@ -285,10 +306,9 @@ const handleDownloadXLSX = async () => {
       {result && (
         <div className="mt-2 w-full max-w-3xl mx-auto mb-6">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full">{result}</pre>
-<button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadXLSX}>
-  Download XLSX
-</button>
-
+          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadXLSX}>
+            Download XLSX
+          </button>
         </div>
       )}
     </>
