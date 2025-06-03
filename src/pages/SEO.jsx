@@ -207,7 +207,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
           
           </ul></div>
       <div className="">
-        <label className="font-semibold mr-4">Choose Input Type:</label>
+        <label className="font-semibold mr-4 mb-2">Choose Input Type:</label>
         <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
           <option value="manual">Manual Input</option>
           <option value="csv">Upload CSV</option>
