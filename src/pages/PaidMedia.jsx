@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx/dist/xlsx.full.min.js";
+import * as XLSX from "xlsx";
 
 export default function PaidMedia() {
   const navigate = useNavigate();
