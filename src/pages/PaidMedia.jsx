@@ -43,14 +43,14 @@ The objective of the ads is to ${objective}
 If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
 If it is Awareness then you will generate awareness for the product.
 
---------
+#########
 
 Facebook prompt:
 1. Hook/Opening Line: Must capture attention quickly within the primary text
 2. Do not exceed the character limit below in the output format
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
 
-Output Format:
+**Output Format**
 Provide the following formats below clearly annotating which ad text is for the placement
 
 1. Image Facebook Feed
@@ -139,149 +139,144 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     }
   };
 
-const handleDownloadXLSX = async () => {
-  let XLSX = window.XLSX;
-  if (!XLSX) {
-    await new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = "https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js";
-      script.onload = resolve;
-      script.onerror = reject;
-      document.body.appendChild(script);
-    });
-    XLSX = window.XLSX;
-  }
-
-  const templateUrl = "https://docs.google.com/spreadsheets/d/1xleMy5Xt4bAXRjni7vQOYX6ILgVWqhom/export?format=xlsx";
-
-  try {
-    const response = await fetch(templateUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch template: ${response.status} ${response.statusText}`);
-    }
-    console.log("✅ Template fetched successfully:", templateUrl);
-
-    const arrayBuffer = await response.arrayBuffer();
-    console.log("✅ Template size (bytes):", arrayBuffer.byteLength);
-    if (arrayBuffer.byteLength < 100) {
-      alert("Template file is too small or empty.");
-      return;
+  const handleDownloadXLSX = async () => {
+    let XLSX = window.XLSX;
+    if (!XLSX) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
+      XLSX = window.XLSX;
     }
 
-    const workbook = XLSX.read(arrayBuffer, { type: "array" });
-    console.log("✅ Workbook loaded. Sheets:", workbook.SheetNames);
+    const templateUrl = "https://docs.google.com/spreadsheets/d/1xleMy5Xt4bAXRjni7vQOYX6ILgVWqhom/export?format=xlsx";
 
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    console.log("✅ Initial sheet range:", sheet["!ref"]);
+    try {
+      const response = await fetch(templateUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch template: ${response.status} ${response.statusText}`);
+      }
+      console.log("✅ Template fetched successfully:", templateUrl);
 
-    if (!sheet || !sheet["!ref"]) {
-      alert("Template loaded but contains no usable content.");
-      return;
-    }
+      const arrayBuffer = await response.arrayBuffer();
+      console.log("✅ Template size (bytes):", arrayBuffer.byteLength);
+      if (arrayBuffer.byteLength < 100) {
+        alert("Template file is too small or empty.");
+        return;
+      }
 
-    const blocks = result.split("\n=========================\n\n").filter(Boolean);
-    const dataRows = [];
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+      console.log("✅ Workbook loaded. Sheets:", workbook.SheetNames);
 
-    blocks.forEach((block) => {
-      const lines = block.split("\n");
-      let currentChannel = null; // Placement name (e.g., Image Facebook Feed)
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      console.log("✅ Initial sheet range:", sheet["!ref"]);
 
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
+      if (!sheet || !sheet["!ref"]) {
+        alert("Template loaded but contains no usable content.");
+        return;
+      }
 
-        // Skip lines like ### Version N
-        if (/^###\s*Version\s*\d+/i.test(line)) {
-          continue; // ignore version heading
-        }
+      const blocks = result.split("\n=========================\n\n").filter(Boolean);
+      const dataRows = [];
 
-        // Detect placement name like "1. **Image Facebook Feed**"
-        const placementMatch = line.match(/^\d+\.\s*\*\*(.+)\*\*/);
-        if (placementMatch) {
-          currentChannel = placementMatch[1].trim();
-          continue;
-        }
+      blocks.forEach((block) => {
+        const lines = block.split("\n");
+        let currentChannel = null; // Placement name
 
-        // Detect primary text line
-        if (/^[-*]\s*\*{0,2}Primary text:/.test(line)) {
-          const primary = line.replace(/^[-*]\s*\*{0,2}Primary text:\*{0,2}/, "").trim();
-          const nextLine = lines[i + 1]?.trim();
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
 
-          if (nextLine && /^[-*]\s*\*{0,2}Headline:/.test(nextLine)) {
-            const headline = nextLine.replace(/^[-*]\s*\*{0,2}Headline:\*{0,2}/, "").trim();
+          // Skip lines like ### Version N
+          if (/^###\s*Version\s*\d+/i.test(line)) {
+            continue;
+          }
 
-            if (currentChannel && primary && headline) {
-              // Prepare row: ["", Channel, "", Primary, "", Headline]
-              const row = ["", currentChannel, "", primary, "", headline];
-              dataRows.push(row);
-              console.log("📄 Parsed row:", row);
+          // Match lines like "**1. Image Facebook Feed**"
+          const placementMatch = line.match(/^\*\*\s*\d+\.\s*(.+?)\s*\*\*/);
+          if (placementMatch) {
+            currentChannel = placementMatch[1].trim();
+            continue;
+          }
+
+          if (/^[-*]?\s*Primary text:/i.test(line)) {
+            const primary = line.replace(/^[-*]?\s*Primary text:/i, "").trim();
+            const nextLine = lines[i + 1]?.trim();
+
+            if (nextLine && /^[-*]?\s*Headline:/i.test(nextLine)) {
+              const headline = nextLine.replace(/^[-*]?\s*Headline:/i, "").trim();
+
+              if (currentChannel && primary && headline) {
+                const row = ["", currentChannel, "", primary, "", headline];
+                dataRows.push(row);
+                console.log("📄 Parsed row:", row);
+              }
+              i++;
             }
-            i++; // Skip headline line
           }
         }
+      });
+
+      if (dataRows.length === 0) {
+        alert("No rows were parsed. Check LLM output format.");
+        console.warn("Empty result. Raw block:\n", result);
+        return;
       }
-    });
 
-    if (dataRows.length === 0) {
-      alert("No rows were parsed. Check LLM output format.");
-      console.warn("Empty result. Raw block:\n", result);
-      return;
+      console.table(dataRows.slice(0, 5));
+
+      // Value-only update for preserving formatting
+      const startRow = 9; // Excel row 10 (0-indexed)
+      dataRows.forEach((row, i) => {
+        const r = startRow + i;
+        const channelCellAddr = XLSX.utils.encode_cell({ r, c: 1 }); // Col B
+        const primaryCellAddr = XLSX.utils.encode_cell({ r, c: 3 }); // Col D
+        const headlineCellAddr = XLSX.utils.encode_cell({ r, c: 5 }); // Col F
+
+        const channelCell = sheet[channelCellAddr];
+        const primaryCell = sheet[primaryCellAddr];
+        const headlineCell = sheet[headlineCellAddr];
+
+        if (channelCell) channelCell.v = row[1];
+        else sheet[channelCellAddr] = { t: "s", v: row[1] };
+
+        if (primaryCell) primaryCell.v = row[3];
+        else sheet[primaryCellAddr] = { t: "s", v: row[3] };
+
+        if (headlineCell) headlineCell.v = row[5];
+        else sheet[headlineCellAddr] = { t: "s", v: row[5] };
+      });
+
+      // Preserve original start of sheet range, extend only if needed
+      const originalRange = XLSX.utils.decode_range(sheet["!ref"]);
+      const endRow = startRow + dataRows.length - 1;
+      const newEndRow = Math.max(originalRange.e.r, endRow);
+      const newEndCol = Math.max(originalRange.e.c, 5); // col F = 5
+
+      sheet["!ref"] = XLSX.utils.encode_range({
+        s: originalRange.s,
+        e: { c: newEndCol, r: newEndRow },
+      });
+
+      const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([wbout], { type: "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "AdCopyFilled.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("❌ Failed to export Excel:", err);
+      alert("Could not export Excel. See console for details.");
     }
-
-    console.table(dataRows.slice(0, 5));
-
-    // Value-only update for preserving formatting
-    const startRow = 9; // Excel row 10 (0-indexed)
-    dataRows.forEach((row, i) => {
-      const r = startRow + i;
-      const channelCellAddr = XLSX.utils.encode_cell({ r, c: 1 }); // Col B
-      const primaryCellAddr = XLSX.utils.encode_cell({ r, c: 3 }); // Col D
-      const headlineCellAddr = XLSX.utils.encode_cell({ r, c: 5 }); // Col F
-
-      const channelCell = sheet[channelCellAddr];
-      const primaryCell = sheet[primaryCellAddr];
-      const headlineCell = sheet[headlineCellAddr];
-
-      if (channelCell) channelCell.v = row[1];
-      else sheet[channelCellAddr] = { t: "s", v: row[1] };
-
-      if (primaryCell) primaryCell.v = row[3];
-      else sheet[primaryCellAddr] = { t: "s", v: row[3] };
-
-      if (headlineCell) headlineCell.v = row[5];
-      else sheet[headlineCellAddr] = { t: "s", v: row[5] };
-    });
-
-    // Preserve original start of sheet range, extend only if needed
-    const originalRange = XLSX.utils.decode_range(sheet["!ref"]);
-    const endRow = startRow + dataRows.length - 1;
-    const newEndRow = Math.max(originalRange.e.r, endRow);
-    const newEndCol = Math.max(originalRange.e.c, 5); // col F = 5
-
-    sheet["!ref"] = XLSX.utils.encode_range({
-      s: originalRange.s,
-      e: { c: newEndCol, r: newEndRow },
-    });
-
-    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([wbout], { type: "application/octet-stream" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "AdCopyFilled.xlsx";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("❌ Failed to export Excel:", err);
-    alert("Could not export Excel. See console for details.");
-  }
-};
-
-
-
+  };
 
   return (
     <>
