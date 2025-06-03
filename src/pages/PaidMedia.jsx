@@ -152,7 +152,7 @@ const handleDownloadXLSX = async () => {
     XLSX = window.XLSX;
   }
 
-  const templateUrl = "https://3lyugptmqjzdmrw9.public.blob.vercel-storage.com/Ad%20Copy%20Template%20-%20GDN%20and%20Meta-4vnFzpbbHh3FlAFLcmgwerhHbjZS8K.xlsx";
+  const templateUrl = "https://github.com/cb8ms/llm-multiple/blob/88cf6d619d96dbcb2ba14faa9bf35143e24a7bef/public/Ad%20Copy%20Template%20-%20GDN%20and%20Meta.xlsx";
 
   try {
     const response = await fetch(templateUrl);
