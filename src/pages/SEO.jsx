@@ -16,7 +16,6 @@ export default function SEO() {
   const [lines, setLines] = useState(5);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [csvRows, setCsvRows] = useState([]);
   const [bespokeTitleCharCount, setBespokeTitleCharCount] = useState("");
   const [bespokeDescCharCount, setBespokeDescCharCount] = useState("");
@@ -146,17 +145,15 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
       if (inputType === "csv") {
         // Batch processing for CSV input
         const prompts = csvRows.map(generatePrompt);
-        setProgress({ current: 0, total: prompts.length });
 
         const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy-batch", { prompts }, { headers: { "Content-Type": "application/json" } });
 
         // Include CSV line number (assuming first data row is line 2)
         const allResults = response.data.responses.map((res, i) => `Line ${i + 2} (URL: ${csvRows[i].url}):\n${res.replace(/\*\*\*/g, "###").replace(/\*\*/g, "")}\n`);
         setResult(allResults.join("\n=========================\n\n"));
-        setProgress({ current: prompts.length, total: prompts.length });
       } else {
         // Manual input (single request)
-        setProgress({ current: 0, total: 1 });
+
         const prompt = generatePrompt({ url, pKeyword, sKeyword, brand });
         const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy", { input_text: prompt }, { headers: { "Content-Type": "application/json" } });
         if (response.data.response) {
@@ -164,7 +161,6 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
         } else {
           setResult(`For input: ${url}\nNo output received.\n`);
         }
-        setProgress({ current: 1, total: 1 });
       }
     } catch (err) {
       setResult("Error generating content.");
@@ -289,7 +285,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
           </svg>
-          Working on it… ({progress.current}/{progress.total})
+          Working on it… 
         </div>
       )}
 
