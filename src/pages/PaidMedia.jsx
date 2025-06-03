@@ -162,67 +162,49 @@ const handleDownloadXLSX = async () => {
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
 
-    // Parse result into blocks (each block = one input result)
     const blocks = result.split("\n=========================\n\n").filter(Boolean);
-
-    // We'll accumulate data rows here as arrays
     const dataRows = [];
-blocks.forEach((block) => {
-  const lines = block.split("\n");
-  let currentChannel = "";
-  let primary = "";
-  let headline = "";
 
-  lines.forEach((line) => {
-    const trimmed = line.trim();
+    blocks.forEach((block) => {
+      const lines = block.split("\n");
+      let currentChannel = "";
 
-    // Match both ### and ** styles for channel
-    if (/^(###|\*\*\d+\.)/.test(trimmed)) {
-      currentChannel = trimmed
-        .replace(/^###/, "")
-        .replace(/^\*\*\d+\./, "")
-        .replace(/\*\*/g, "")
-        .trim();
-    }
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
 
-    // Match Primary text line
-    if (trimmed.match(/- \*{0,2}Primary text:?\*{0,2}/)) {
-      primary = trimmed
-        .replace(/- \*{0,2}Primary text:?\*{0,2}/, "")
-        .trim();
-    }
+        if (/^(###|\*\*\d+\.)/.test(line)) {
+          currentChannel = line
+            .replace(/^###/, "")
+            .replace(/^\*\*\d+\./, "")
+            .replace(/\*\*/g, "")
+            .trim();
+        }
 
-    // Match Headline line
-    if (trimmed.match(/- \*{0,2}Headline:?\*{0,2}/)) {
-      headline = trimmed
-        .replace(/- \*{0,2}Headline:?\*{0,2}/, "")
-        .trim();
+        if (/^Primary text:/i.test(line)) {
+          const primary = line.replace(/^Primary text:/i, "").trim();
+          const nextLine = lines[i + 1]?.trim();
 
-      if (currentChannel && primary && headline) {
-        dataRows.push(["", currentChannel, primary, headline]);
-        primary = "";
-        headline = "";
+          if (nextLine && /^Headline:/i.test(nextLine)) {
+            const headline = nextLine.replace(/^Headline:/i, "").trim();
+
+            if (currentChannel && primary && headline) {
+              dataRows.push(["", currentChannel, primary, "", headline]);
+            }
+            i++;
+          }
+        }
       }
-    }
-  });
-});
-
-    // Get current range
-    const range = XLSX.utils.decode_range(sheet["!ref"]);
-    // Append rows after the last row of the sheet
-    const startRow = range.e.r + 1;
-
-    // Add rows using sheet_add_aoa starting from the next empty row
-    XLSX.utils.sheet_add_aoa(sheet, dataRows, { origin: { r: startRow, c: 0 } });
-
-    // Update sheet range
-    const newEndRow = startRow + dataRows.length - 1;
-    sheet["!ref"] = XLSX.utils.encode_range({
-      s: { c: 0, r: 0 },
-      e: { c: 3, r: newEndRow },
     });
 
-    // Write and download
+    // Write data starting from row 10, column B
+    XLSX.utils.sheet_add_aoa(sheet, dataRows, { origin: { r: 9, c: 1 } });
+
+    const endRow = 9 + dataRows.length;
+    sheet["!ref"] = XLSX.utils.encode_range({
+      s: { c: 1, r: 9 },
+      e: { c: 5, r: endRow },
+    });
+
     const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([wbout], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
