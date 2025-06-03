@@ -198,7 +198,7 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
   return (
     <div className="p-8 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
-      <div className="text-base mt-1">Instructions</div>
+      <div className="text-base font-semibold mt-1">Instructions</div>
       <div className="text-sm">
         <ul class="list-disc list-outside mt-1 mb-4">
           <li>First select the type of input, if selecting CSV for Bulk upload, please download <a className="font-bold" href="https://docs.google.com/spreadsheets/d/1jt1pljedbNNdzBHes-lONTYTTdZvDSrHdhjWatfP6CE/edit?gid=0#gid=0" target="_blank">THIS TEMPLATE</a></li>
