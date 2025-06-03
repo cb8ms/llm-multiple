@@ -195,27 +195,20 @@ Begin your output with: For input: ${pKeyword}, and then provide all title and d
     document.body.removeChild(link);
   };
 
-return (
+  return (
     <>
-      <div className="p-8 max-w-xl mx-auto">
+      <div className="p-4 max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">SEO Marketing Copy Generator</h1>
         <div className="text-base mt-1">Instructions</div>
         <div className="text-sm">
           <ul className="mt-1 mb-4">
             <li>
               First select the type of input, if selecting CSV for Bulk upload, please download{" "}
-              <a
-                className="font-bold"
-                href="https://docs.google.com/spreadsheets/d/1jt1pljedbNNdzBHes-lONTYTTdZvDSrHdhjWatfP6CE/edit?gid=0#gid=0"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="font-bold" href="https://docs.google.com/spreadsheets/d/1jt1pljedbNNdzBHes-lONTYTTdZvDSrHdhjWatfP6CE/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">
                 THIS TEMPLATE
               </a>
             </li>
-            <li>
-              To download the template: Click on File, Download and than select Comma-separated values (.csv)
-            </li>
+            <li>To download the template: Click on File, Download and than select Comma-separated values (.csv)</li>
             <li>
               Please note that currently the maximum that can be uploaded at once is <strong>70 lines</strong> on the CSV file. If it is more then 70, please use multiple sheets.
             </li>
@@ -230,30 +223,10 @@ return (
         </div>
         {inputType === "manual" ? (
           <>
-            <input
-              className="w-full p-2 border mb-2"
-              placeholder="Insert Client URL"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
-            <input
-              className="w-full p-2 border mb-2"
-              placeholder="Insert Primary keyword"
-              value={pKeyword}
-              onChange={(e) => setPkeyword(e.target.value)}
-            />
-            <input
-              className="w-full p-2 border mb-2"
-              placeholder="Insert Secondary keywords.(If more then one,use comma to separate them)"
-              value={sKeyword}
-              onChange={(e) => setsKeyword(e.target.value)}
-            />
-            <input
-              className="w-full p-2 border mb-2"
-              placeholder="Insert Client Brand name here"
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-            />
+            <input className="w-full p-2 border mb-2" placeholder="Insert Client URL" value={url} onChange={(e) => setUrl(e.target.value)} />
+            <input className="w-full p-2 border mb-2" placeholder="Insert Primary keyword" value={pKeyword} onChange={(e) => setPkeyword(e.target.value)} />
+            <input className="w-full p-2 border mb-2" placeholder="Insert Secondary keywords.(If more then one,use comma to separate them)" value={sKeyword} onChange={(e) => setsKeyword(e.target.value)} />
+            <input className="w-full p-2 border mb-2" placeholder="Insert Client Brand name here" value={brand} onChange={(e) => setBrand(e.target.value)} />
           </>
         ) : (
           <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center">
@@ -294,39 +267,15 @@ return (
           <div className="mb-2">
             <div className="mt-2">
               <div className="text-sm mt-1">Title</div>
-              <input
-                type="number"
-                min={1}
-                max={120}
-                value={bespokeTitleCharCount}
-                onChange={(e) => setBespokeTitleCharCount(e.target.value)}
-                className="w-full p-2 border mb-2"
-                placeholder="Enter max title character count (max 75)"
-              />
-              {bespokeTitleCharCount > 75 && (
-                <div className="text-red-600 text-sm mt-1">
-                  Warning: Title character count cannot exceed 75.
-                </div>
-              )}
+              <input type="number" min={1} max={120} value={bespokeTitleCharCount} onChange={(e) => setBespokeTitleCharCount(e.target.value)} className="w-full p-2 border mb-2" placeholder="Enter max title character count (max 75)" />
+              {bespokeTitleCharCount > 75 && <div className="text-red-600 text-sm mt-1">Warning: Title character count cannot exceed 75.</div>}
               <div className="text-sm mt-1">Meta Description</div>
-              <input
-                type="text"
-                value={bespokeDescCharCount}
-                onChange={(e) => setBespokeDescCharCount(e.target.value)}
-                className="w-full p-2 border"
-                placeholder='Enter max description character count (e.g. "150-160")'
-              />
+              <input type="text" value={bespokeDescCharCount} onChange={(e) => setBespokeDescCharCount(e.target.value)} className="w-full p-2 border" placeholder='Enter max description character count (e.g. "150-160")' />
             </div>
           </div>
         )}
         <div className="flex items-center mb-2">
-          <input
-            type="checkbox"
-            id="recommendBrandInTitle"
-            checked={recommendBrandInTitle}
-            onChange={(e) => setRecommendBrandInTitle(e.target.checked)}
-            className="mr-2"
-          />
+          <input type="checkbox" id="recommendBrandInTitle" checked={recommendBrandInTitle} onChange={(e) => setRecommendBrandInTitle(e.target.checked)} className="mr-2" />
           <label htmlFor="recommendBrandInTitle" className="text-sm">
             Recommend adding the Brand name at the end of Page Titles
           </label>
@@ -347,27 +296,18 @@ return (
 
         {loading && (
           <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
-            <svg
-              className="animate-spin h-4 w-4 text-blue-600 ml-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
+            <svg className="animate-spin h-4 w-4 text-blue-600 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              ></path>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
             </svg>
             Working on it…
           </div>
         )}
       </div>
       {result && (
-        <div className="mt-8 w-full max-w-5xl mx-auto">
+        <div className="mt-2 w-full max-w-4xl mx-auto">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full text-base">{result}</pre>
-          <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
+          <button className="mt-2 mb-5 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
             Download CSV
           </button>
         </div>
