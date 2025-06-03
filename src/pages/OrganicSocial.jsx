@@ -67,6 +67,46 @@ Headline: 10 characters
 4. Facebook Video Feed
 Primary text: 50-150 characters
 Headline: 27 characters`;
+    } else if (platform === "Instagram") {
+      return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
+
+Input Client:
+Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+
+Input Language:
+Please write the ads in the correct spelling and grammar of ${language}
+
+Input Key Marketing Objective:
+The objective of the ads is to ${objective}
+
+If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
+If it is Awareness then you will generate awareness for the product.
+
+#########
+
+Facebook prompt:
+1. Hook/Opening Line: Must capture attention quickly within the primary text
+2. Do not exceed the character limit below in the output format
+3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+
+**Output Format**
+Provide the following formats below clearly annotating which ad text is for the placement
+
+1. Image Facebook Feed
+Primary text: 50-150 characters
+Headline: 27 characters
+
+2. Facebook Stories
+Primary text: 125 characters
+Headline: 40 characters
+
+3. Facebook Reels
+Primary text: 72 characters
+Headline: 10 characters
+
+4. Facebook Video Feed
+Primary text: 50-150 characters
+Headline: 27 characters`;
     } else {
       return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
@@ -184,7 +224,8 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
 
       <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
         <option>Facebook</option>
-        <option>Google Ads</option>
+        <option>Instagram</option>
+        <option>TikTok</option>
       </select>
 
       <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
