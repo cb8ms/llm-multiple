@@ -43,34 +43,48 @@ If it is Awareness then you will generate awareness for the product.
 
 ------
 
-Facebook prompt:
-1. Hook/Opening Line: Must capture attention quickly within the primary text
-2. Do not exceed the character limit below in the output format
-3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+IMPORTANT: Output ONLY the following fields for each placement and each option, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only. DO NOT use asterisks, hashes, or any special characters.
 
-Output Format:
-IMPORTANT: Provide the following formats below clearly annotating which ad text is for the placement
-MAINTAIN THE ORDER BELOW, DO NOT CHANGE THE ORDER OF THE OUTPUTS, AVOID USING ANY SPECIAL CHARACTERS SUCH AS * OR # IN THE OUTPUTS, JUST USE PLAIN TEXT AND THE MARK UP AS BELOW:
-
+For each placement, output ${lines} options, in this format:
 
 1. Image Facebook Feed
-Primary text: 50-150 characters
-Headline: 27 characters
+Option 1:
+Primary text: [text]
+Headline: [text]
+Option 2:
+Primary text: [text]
+Headline: [text]
+...repeat up to Option ${lines}...
 
 2. Facebook Stories
-Primary text: 125 characters
-Headline: 40 characters
+Option 1:
+Primary text: [text]
+Headline: [text]
+Option 2:
+Primary text: [text]
+Headline: [text]
+...repeat up to Option ${lines}...
 
 3. Facebook Reels
-Primary text: 72 characters
-Headline: 10 characters
+Option 1:
+Primary text: [text]
+Headline: [text]
+Option 2:
+Primary text: [text]
+Headline: [text]
+...repeat up to Option ${lines}...
 
 4. Facebook Video Feed
-Primary text: 50-150 characters
-Headline: 27 characters
+Option 1:
+Primary text: [text]
+Headline: [text]
+Option 2:
+Primary text: [text]
+Headline: [text]
+...repeat up to Option ${lines}...
 
-
-REMEMBER TO PROVIDE ${lines} OPTIONS FOR EACH PLACEMENT`;
+Do not include any other text, explanations, or formatting. Do not use asterisks, hashes, or markdown. Use only plain text as shown above.
+`;
     } else {
       return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
@@ -99,7 +113,9 @@ Description (2): [text] ([character count])
 Path (1): [text] ([character count])
 Path (2): [text] ([character count])
 
-Repeat for each ad. Do not include any other text, explanations, or formatting.`;
+Repeat for each ad. Do not include any other text, explanations, or formatting.
+
+`;
     }
   };
 
