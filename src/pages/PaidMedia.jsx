@@ -67,7 +67,10 @@ Headline: 10 characters
 
 4. Facebook Video Feed
 Primary text: 50-150 characters
-Headline: 27 characters`;
+Headline: 27 characters
+
+
+REMEMBER TO PROVIDE ${lines} OPTIONS FOR EACH PLACEMENT`;
     } else {
       return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
