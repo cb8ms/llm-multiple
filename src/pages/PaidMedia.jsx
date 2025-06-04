@@ -99,9 +99,7 @@ Description (2): [text] ([character count])
 Path (1): [text] ([character count])
 Path (2): [text] ([character count])
 
-Repeat for each ad. Do not include any other text, explanations, or formatting.
-
-`;
+Repeat for each ad. Do not include any other text, explanations, or formatting.`;
     }
   };
 
