@@ -49,7 +49,9 @@ Facebook prompt:
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
 
 **Output Format**
-Provide the following formats below clearly annotating which ad text is for the placement
+IMPORTANT: Provide the following formats below clearly annotating which ad text is for the placement
+MAINTAIN THE ORDER BELOW, DO NOT CHANGE THE ORDER OF THE OUTPUTS, DONT USE CHARACTERS LIKE * OR # IN THE OUTPUTS, JUST USE THE TEXT AS IS BELOW:
+
 
 1. Image Facebook Feed
 Primary text: 50-150 characters
