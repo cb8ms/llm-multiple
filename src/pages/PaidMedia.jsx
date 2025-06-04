@@ -228,8 +228,10 @@ Repeat for each ad. Do not include any other text, explanations, or formatting.
           </select>
         </div>
         {inputType === "manual" ? (
-          <div className="text-sm mt-1">Insert Client URL or keyword</div>
-          <input className="w-full p-2 border mb-2 mt-2" placeholder="Insert Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
+          <div className="text-sm mt-1">
+            Insert Client URL or keyword
+            <input className="w-full p-2 border mb-2 mt-2" placeholder="Insert Client URL or keyword" value={url} onChange={(e) => setUrl(e.target.value)} />
+          </div>
         ) : (
           <div className="border-dashed border-2 border-gray-400 p-6 mb-2 text-center mt-2">
             <input type="file" accept=".csv" onChange={handleFileUpload} className="w-full text-center" />
