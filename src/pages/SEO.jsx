@@ -129,10 +129,19 @@ Rules:
 3. Meta descriptions: Must include the brand name (${brand}); encourage user engagement and click-through; begin with the most important information to preserve meaning if truncated.
 4. Capitalization: All location names must be capitalized (e.g., "london" → "London"); ensure proper nouns like cities, countries, and regions use correct capitalization.
 
-After each title and description, include the character count in brackets, e.g., [121 characters].
+IMPORTANT: Output ONLY the following fields for each version, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only. DO NOT use asterisks, hashes, or any special characters.
 
-Begin your output with: For input: ${pKeyword}, and then provide all title and description variations.
+For input: ${pKeyword}
 
+For each version, output in this format:
+
+Title 1: [text] ([character count])
+Meta Description 1: [text] ([character count])
+Title 2: [text] ([character count])
+Meta Description 2: [text] ([character count])
+...repeat up to Title ${lines} and Meta Description ${lines}...
+
+Do not include any other text, explanations, or formatting. Use only plain text as shown above.
 `;
     return basePrompt;
   };
