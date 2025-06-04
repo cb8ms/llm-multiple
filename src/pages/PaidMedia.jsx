@@ -102,7 +102,7 @@ Path (1): 15 characters
 Path (2): 15 characters 
 
 Copy paste output:
-Provide a short paragraph on the reason why this ad copy has been selected followed by a table clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
+Provide a short paragraph on the reason why this ad copy has been selected followed by a list style output clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
     }
   };
 
