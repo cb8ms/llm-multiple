@@ -88,22 +88,20 @@ If it is Awareness then you will generate awareness for the product.
 
 -------
 
-Google Ads prompt:
-1. Hook/Opening Line: Must capture attention quickly within the headlines
-2. Do not exceed the character limit below in the output format
-3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
-4. MAINTAIN THE ORDER BELOW, DO NOT CHANGE THE ORDER OF THE OUTPUTS, AVOID USING ANY SPECIAL CHARACTERS SUCH AS * OR # IN THE OUTPUTS, JUST USE PLAIN TEXT AND THE MARK UP AS BELOW:
+Output ONLY the following fields for each ad, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only.
+Each of the headlines contain up to 30 characters, descriptions up to 90 characters, and paths up to 15 characters.
 
-Output Format:
-Headline (1): 30 characters
-Headline (2): 30 characters
-Description (1): 90 characters
-Description (2): 90 characters
-Path (1): 15 characters 
-Path (2): 15 characters 
+For each ad, output:
+Headline (1): [text] ([character count]) 
+Headline (2): [text] ([character count])
+Description (1): [text] ([character count])
+Description (2): [text] ([character count])
+Path (1): [text] ([character count])
+Path (2): [text] ([character count])
 
-Copy paste output:
-Provide a short paragraph on the reason why this ad copy has been selected followed by a list style output clearly outlining the output format and suggestions. Please include the number of characters, including spaces, in brackets after each response.`;
+Repeat for each ad. Do not include any other text, explanations, or formatting.
+
+`;
     }
   };
 
