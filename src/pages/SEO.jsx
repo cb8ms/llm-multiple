@@ -1,4 +1,3 @@
-// /components/SEO.js
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -162,7 +161,6 @@ Do not include any other text, explanations, or formatting. Use only plain text 
         setResult(allResults.join("\n=========================\n\n"));
       } else {
         // Manual input (single request)
-
         const prompt = generatePrompt({ url, pKeyword, sKeyword, brand });
         const response = await axios.post("https://llm-backend-82gd.onrender.com/api/generate-copy", { input_text: prompt }, { headers: { "Content-Type": "application/json" } });
         if (response.data.response) {
@@ -178,30 +176,27 @@ Do not include any other text, explanations, or formatting. Use only plain text 
     }
   };
 
-  const handleDownloadCSV = () => {
-    // Sanitize the result by removing unwanted "###" characters
-    const sanitizedResult = result.replace(/###/g, "");
-
-    const blocks = sanitizedResult.split("\n=========================\n\n").filter(Boolean);
-    const csvRows = [];
-
-    blocks.forEach((block) => {
-      const lines = block.split("\n").filter(Boolean); // Split block into lines
-      lines.forEach((line) => {
-        const safe = line.replace(/"/g, '""'); // Escape double quotes for CSV
-        csvRows.push(`"${safe}"`); // Add each line as a separate row
-      });
-    });
-
-    // Add BOM to ensure proper encoding
-    const csvContent = "\uFEFF" + csvRows.join("\n");
-    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "marketing-copy.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  // Export SEO XLSX (Download XLSX)
+  const handleExportSEOXLSX = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "https://llm-backend-82gd.onrender.com/api/export-xlsx-seo",
+        { llm_output: result },
+        { responseType: "blob", headers: { "Content-Type": "application/json" } }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "SEO_Metadata.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      alert("Export failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -302,6 +297,9 @@ Do not include any other text, explanations, or formatting. Use only plain text 
         <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
           ← Back
         </button>
+        <button className="ml-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleExportSEOXLSX} disabled={loading || !result}>
+          Download XLSX
+        </button>
 
         {loading && (
           <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
@@ -316,9 +314,6 @@ Do not include any other text, explanations, or formatting. Use only plain text 
       {result && (
         <div className="mt-2 w-full max-w-3xl mx-auto">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full text-base">{result}</pre>
-          <button className="mt-2 mb-5 bg-green-600 text-white px-4 py-2 rounded" onClick={handleDownloadCSV}>
-            Download CSV
-          </button>
         </div>
       )}
     </>
