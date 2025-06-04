@@ -92,6 +92,7 @@ Google Ads prompt:
 1. Hook/Opening Line: Must capture attention quickly within the headlines
 2. Do not exceed the character limit below in the output format
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+4. MAINTAIN THE ORDER BELOW, DO NOT CHANGE THE ORDER OF THE OUTPUTS, DONT USE CHARACTERS LIKE * OR # IN THE OUTPUTS, JUST USE THE TEXT AS IS BELOW:
 
 **Output Format**
 Headline (1): 30 characters
