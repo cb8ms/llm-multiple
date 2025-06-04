@@ -245,6 +245,7 @@ Repeat for each ad. Do not include any other text, explanations, or formatting.
           <option>English US</option>
           <option>Italian</option>
           <option>French</option>
+           <option>German</option>
         </select>
         <div className="text-sm mt-1">Select the Platform</div>
         <select className="w-full p-2 border mb-2" value={platform} onChange={(e) => setPlatform(e.target.value)}>
