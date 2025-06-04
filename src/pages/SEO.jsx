@@ -314,6 +314,9 @@ Do not include any other text, explanations, or formatting. Use only plain text 
       {result && (
         <div className="mt-2 w-full max-w-3xl mx-auto">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full text-base">{result}</pre>
+                <button className="ml-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleExportSEOXLSX}>
+          Download XLSX
+        </button>
         </div>
       )}
     </>
