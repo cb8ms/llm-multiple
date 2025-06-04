@@ -130,10 +130,10 @@ Rules:
 
 IMPORTANT: Output ONLY the following fields for each version, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only. DO NOT use asterisks, hashes, or any special characters.
 
-For input: ${pKeyword}
 
 For each version, output in this format:
 
+For input: ${pKeyword} - Brand {${brand} - URL: ${url}
 Title 1: [text] ([character count])
 Meta Description 1: [text] ([character count])
 Title 2: [text] ([character count])
@@ -180,11 +180,7 @@ Do not include any other text, explanations, or formatting. Use only plain text 
   const handleExportSEOXLSX = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "https://llm-backend-82gd.onrender.com/api/export-xlsx-seo",
-        { llm_output: result },
-        { responseType: "blob", headers: { "Content-Type": "application/json" } }
-      );
+      const response = await axios.post("https://llm-backend-82gd.onrender.com/api/export-xlsx-seo", { llm_output: result }, { responseType: "blob", headers: { "Content-Type": "application/json" } });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -297,9 +293,6 @@ Do not include any other text, explanations, or formatting. Use only plain text 
         <button className="ml-2 bg-gray-500 text-white px-4 py-2 rounded" onClick={() => navigate("/")}>
           ← Back
         </button>
-        <button className="ml-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleExportSEOXLSX} disabled={loading || !result}>
-          Download XLSX
-        </button>
 
         {loading && (
           <div className="inline-flex items-center gap-2 text-blue-600 font-medium mt-2">
@@ -314,9 +307,9 @@ Do not include any other text, explanations, or formatting. Use only plain text 
       {result && (
         <div className="mt-2 w-full max-w-3xl mx-auto">
           <pre className="bg-gray-100 p-6 whitespace-pre-wrap w-full text-base">{result}</pre>
-                <button className="ml-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleExportSEOXLSX}>
-          Download XLSX
-        </button>
+          <button className="ml-2 bg-green-600 text-white px-4 py-2 rounded" onClick={handleExportSEOXLSX}>
+            Download XLSX
+          </button>
         </div>
       )}
     </>
