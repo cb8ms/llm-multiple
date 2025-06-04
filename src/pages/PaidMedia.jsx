@@ -49,38 +49,38 @@ For each placement, output ${lines} options, in this format:
 
 1. Image Facebook Feed
 Option 1:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 Option 2:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 ...repeat up to Option ${lines}...
 
 2. Facebook Stories
 Option 1:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 Option 2:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 ...repeat up to Option ${lines}...
 
 3. Facebook Reels
 Option 1:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 Option 2:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 ...repeat up to Option ${lines}...
 
 4. Facebook Video Feed
 Option 1:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 Option 2:
-Primary text: [text]
-Headline: [text]
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
 ...repeat up to Option ${lines}...
 
 Do not include any other text, explanations, or formatting. Do not use asterisks, hashes, or markdown. Use only plain text as shown above.
