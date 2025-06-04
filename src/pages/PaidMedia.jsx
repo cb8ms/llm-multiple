@@ -41,15 +41,14 @@ The objective of the ads is to ${objective}
 If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
 If it is Awareness then you will generate awareness for the product.
 
-
-------
+#########
 
 Facebook prompt:
 1. Hook/Opening Line: Must capture attention quickly within the primary text
 2. Do not exceed the character limit below in the output format
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
 
-Output Format
+**Output Format**
 IMPORTANT: Provide the following formats below clearly annotating which ad text is for the placement
 MAINTAIN THE ORDER BELOW, DO NOT CHANGE THE ORDER OF THE OUTPUTS, DONT USE CHARACTERS LIKE * OR # IN THE OUTPUTS, JUST USE THE TEXT AS IS BELOW:
 
@@ -87,7 +86,7 @@ The objective of the ads is to ${objective}
 If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
 If it is Awareness then you will generate awareness for the product.
 
--------
+#########
 
 Google Ads prompt:
 1. Hook/Opening Line: Must capture attention quickly within the headlines
@@ -95,7 +94,7 @@ Google Ads prompt:
 3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
 4. MAINTAIN THE ORDER BELOW, DO NOT CHANGE THE ORDER OF THE OUTPUTS, DONT USE CHARACTERS LIKE * OR # IN THE OUTPUTS, JUST USE THE TEXT AS IS BELOW:
 
-Output Format:
+**Output Format**
 Headline (1): 30 characters
 Headline (2): 30 characters
 Description (1): 90 characters
@@ -153,8 +152,10 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
     try {
       setLoading(true);
 
-      // Send the LLM output (the generated ad copy) to your backend export endpoint
-      const response = await fetch("https://llm-backend-82gd.onrender.com/api/export-xlsx", {
+      // Choose endpoint based on platform
+      const endpoint = platform === "Google Ads" ? "https://llm-backend-82gd.onrender.com/api/export-xlsx-google" : "https://llm-backend-82gd.onrender.com/api/export-xlsx";
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,18 +170,15 @@ Provide a short paragraph on the reason why this ad copy has been selected follo
         return;
       }
 
-      // Receive the XLSX file blob
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
-      // Create a temporary link to trigger download
       const a = document.createElement("a");
       a.href = url;
-      a.download = "AdCopyFilled.xlsx";
+      a.download = platform === "Google Ads" ? "GoogleAdsCopyFilled.xlsx" : "AdCopyFilled.xlsx";
       document.body.appendChild(a);
       a.click();
 
-      // Clean up
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
