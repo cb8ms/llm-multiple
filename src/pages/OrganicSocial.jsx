@@ -47,24 +47,120 @@ The user should be enticed to click through from the ad to the provided URL
 ${emojiRequirement}
 
 
-**Output Format** 
-Provide the following formats below clearly annotating which ad text is for the placement
+IMPORTANT: Output ONLY the following fields for each placement and each option, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only. DO NOT use asterisks, hashes, or any special characters.
+
+For each placement, output ${lines} options, in this format:
 
 1. Image Facebook Feed
-Primary text: 50-150 characters 
-Headline: 27 characters 
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
 
 2. Facebook Stories
-Primary text: 125 characters 
-Headline: 40 characters 
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
 
 3. Facebook Reels
-Primary text: 72 characters 
-Headline: 10 characters 
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
 
 4. Facebook Video Feed
-Primary text: 50-150 characters 
-Headline: 27 characters 
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+Do not include any other text, explanations, or formatting. Do not use asterisks, hashes, or markdown. Use only plain text as shown above.
+
+**Returned format in answer**
+Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide ${lines} options for each placement.
+
+Input Client:
+Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+
+Input Language:
+Please write the ads in the correct spelling and grammar of ${language}
+
+Input Key Marketing Objective:
+The objective of the ads is to ${objective}`;
+    } else if (platform === "Instagram") {
+      let emojiRequirement = "";
+      if (emoji === "true") {
+        emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence. But in order to add emoji's, you should look at profile and only use the same types of emojis as the brand is already using.\n`;
+      }
+      return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
+
+**Brand & Product/Service Context** 
+Include the brand name in each headline and try and use as many of the available characters as possible
+
+**Key Marketing Objective** 
+The user should be enticed to click through from the ad to the provided URL
+
+**Messaging Requirements** 
+1. Hook/Opening Line: Must capture attention quickly 
+2. Tone of Voice: Derive the tone of voice from the provided URL and closely align with similar wording
+3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+${emojiRequirement}
+
+
+IMPORTANT: Output ONLY the following fields for each placement and each option, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only. DO NOT use asterisks, hashes, or any special characters.
+
+For each placement, output ${lines} options, in this format:
+
+1. Image Facebook Feed
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+2. Facebook Stories
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+3. Facebook Reels
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+4. Facebook Video Feed
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+Do not include any other text, explanations, or formatting. Do not use asterisks, hashes, or markdown. Use only plain text as shown above.
 
 **Returned format in answer**
 Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide ${lines} options for each placement.
@@ -78,7 +174,78 @@ Please write the ads in the correct spelling and grammar of ${language}
 Input Key Marketing Objective:
 The objective of the ads is to ${objective}`;
     } else {
-      return `Nada`;
+      let emojiRequirement = "";
+      if (emoji === "true") {
+        emojiRequirement = `4. You should use ${emoji} emoji's in the beginning of the sentence. But in order to add emoji's, you should look at profile and only use the same types of emojis as the brand is already using.\n`;
+      }
+      return `You are a skilled marketing copywriter with expertise in creating Facebook and Instagram ads for product and content promotion. You will be given a URL and need to go through the following steps to ensure that the ad closely aligns with the request.
+
+**Brand & Product/Service Context** 
+Include the brand name in each headline and try and use as many of the available characters as possible
+
+**Key Marketing Objective** 
+The user should be enticed to click through from the ad to the provided URL
+
+**Messaging Requirements** 
+1. Hook/Opening Line: Must capture attention quickly 
+2. Tone of Voice: Derive the tone of voice from the provided URL and closely align with similar wording
+3. Compliance: No exaggerated claims or anything that cannot be found on the provided URL, if pricing is available please include this in the primary text.
+${emojiRequirement}
+
+
+IMPORTANT: Output ONLY the following fields for each placement and each option, in this exact order, with no extra text, no explanations, and no markdown or special formatting. Use plain text only. DO NOT use asterisks, hashes, or any special characters.
+
+For each placement, output ${lines} options, in this format:
+
+1. Image Facebook Feed
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+2. Facebook Stories
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+3. Facebook Reels
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+4. Facebook Video Feed
+Option 1:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+Option 2:
+Primary text: [text] ([character count]) 
+Headline: [text] ([character count]) 
+...repeat up to Option ${lines}...
+
+Do not include any other text, explanations, or formatting. Do not use asterisks, hashes, or markdown. Use only plain text as shown above.
+
+**Returned format in answer**
+Provide a short paragraph on the reason why this ad copy has been selected followed by the output that should be: line 1 being the format, line 2 the headline and line 3 is the  the primary text. To ensure client satisfaction you will provide ${lines} options for each placement.
+
+Input Client:
+Please write the ads for ${input} and use the tone of voice of the website and try and use as many of the available characters as listed in the output format
+
+Input Language:
+Please write the ads in the correct spelling and grammar of ${language}
+
+Input Key Marketing Objective:
+The objective of the ads is to ${objective}`;
     }
   };
 
@@ -107,8 +274,6 @@ The objective of the ads is to ${objective}`;
         } else {
           allResults.push(`For input: ${input}\nNo output received.\n`);
         }
-
-        
       }
 
       setResult(allResults.join("\n=========================\n\n"));
@@ -149,7 +314,22 @@ The objective of the ads is to ${objective}`;
     <div className="p-8 mx-auto">
       <div className="max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">Organic Social Media Marketing Copy Generator</h1>
-
+        <div className="text-base mt-1">Instructions</div>
+        <div className="text-sm">
+          <ul className="mt-1 mb-4">
+            <li>
+              First select the type of input, if selecting CSV for Bulk upload, please download{" "}
+              <a className="font-bold" href="https://docs.google.com/spreadsheets/d/1jt1pljedbNNdzBHes-lONTYTTdZvDSrHdhjWatfP6CE/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">
+                THIS TEMPLATE
+              </a>
+            </li>
+            <li>To download the template: Click on File, Download and than select Comma-separated values (.csv)</li>
+            <li>
+              Please note that currently the maximum that can be uploaded at once is <strong>70 lines</strong> on the CSV file. If it is more then 70, please use multiple sheets.
+            </li>
+          </ul>
+        </div>
+        <div></div>
         <div className="mb-4">
           <label className="font-semibold mr-4">Choose Input Type:</label>
           <select className="p-2 border" value={inputType} onChange={(e) => setInputType(e.target.value)}>
@@ -212,7 +392,7 @@ The objective of the ads is to ${objective}`;
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
             </svg>
-            Working on it… 
+            Working on it…
           </div>
         )}
       </div>
