@@ -38,7 +38,8 @@ Please write the ads in the correct spelling and grammar of ${language}
 Input Key Marketing Objective:
 The objective of the ads is to ${objective}
 
-If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
+If it is Sales then you will Extract from the landing page the product name, exact price (MANDATORY, INCLUDING DISCOUNTS OR PROMOTIONAL PRICING), 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
+
 If it is Awareness then you will generate awareness for the product.
 
 ------
@@ -114,7 +115,7 @@ Description (2): [text] ([character count])
 Path (1): [text] ([character count])
 Path (2): [text] ([character count])
 
-Repeat for each ad. Do not include any other text, explanations, or formatting.
+Repeat for each ad for ${lines} times. Do not include any other text, explanations, or formatting.
 
 `;
     }
