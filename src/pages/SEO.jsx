@@ -19,6 +19,7 @@ export default function SEO() {
   const [bespokeTitleCharCount, setBespokeTitleCharCount] = useState("");
   const [bespokeDescCharCount, setBespokeDescCharCount] = useState("");
   const [recommendBrandInTitle, setRecommendBrandInTitle] = useState(false);
+  const [objective, setObjective] = useState("Sales");
 
   function parseCsvLine(line) {
     const result = [];
@@ -116,6 +117,12 @@ export default function SEO() {
     const basePrompt = `You are an SEO expert in writing metadata and must strictly follow the steps below to meet all input requirements. You will provide ${lines} distinct versions of each metadata output.
 
 Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyword}; Brand: ${brand}. Use the tone of voice from the website at ${url}. Write for a ${screenSize.toLowerCase()} display audience in ${language}.
+
+Input Key Marketing Objective:
+The objective of the ads is to ${objective}
+
+If it is Sales then you will sell the product to the user and should contain as much direct information about the product.
+If it is Awareness then you will generate awareness for the product.
 
 Your task is to write:
 - ${lines} page titles, each no more than ${titleCharLimitMax} characters (including spaces), and ideally within 5 characters of that limit.
@@ -280,6 +287,11 @@ Do not include any other text, explanations, or formatting. Use only plain text 
             Recommend adding the Brand name at the end of Page Titles
           </label>
         </div>
+        <div className="text-sm mt-1">Type of Marketing Objective</div>
+        <select className="w-full p-2 border mb-2" value={objective} onChange={(e) => setObjective(e.target.value)}>
+          <option>Sales</option>
+          <option>Awareness</option>
+        </select>
         <div className="text-sm mt-1">Number of Lines</div>
         <select className="w-full p-2 border mb-2" value={lines} onChange={(e) => setLines(Number(e.target.value))}>
           <option value={5}>5</option>
