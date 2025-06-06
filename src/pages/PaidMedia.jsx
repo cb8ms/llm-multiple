@@ -14,17 +14,32 @@ export default function PaidMedia() {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Placement selection state
+  // Facebook placements
   const [placements, setPlacements] = useState({
     "Facebook Stories": true,
     "Facebook Reels": true,
     "Facebook Video Feed": true,
   });
 
+  // Google Ads fields
+  const [googleFields, setGoogleFields] = useState({
+    Headline: true,
+    Description: true,
+    Path: true,
+    Sitelink: true,
+  });
+
   const handlePlacementChange = (placement) => {
     setPlacements((prev) => ({
       ...prev,
       [placement]: !prev[placement],
+    }));
+  };
+
+  const handleGoogleFieldChange = (field) => {
+    setGoogleFields((prev) => ({
+      ...prev,
+      [field]: !prev[field],
     }));
   };
 
@@ -86,9 +101,37 @@ IMPORTANT: Output ONLY the following fields for each placement and each option, 
 
 For each placement, output ${lines} options, in this format:
 ${placementInstructions}
+
 Do not include any other text, explanations, or formatting. Do not use asterisks, hashes, or markdown. Use only plain text as shown above.
 `;
     } else {
+      // Google Ads: Build output fields based on selected checkboxes
+      const fields = [];
+      if (googleFields.Headline) {
+        fields.push(
+          "Headline (1): [text] ([character count])",
+          "Headline (2): [text] ([character count])"
+        );
+      }
+      if (googleFields.Description) {
+        fields.push(
+          "Description (1): [text] ([character count])",
+          "Description (2): [text] ([character count])"
+        );
+      }
+      if (googleFields.Path) {
+        fields.push(
+          "Path (1): [text] ([character count])",
+          "Path (2): [text] ([character count])"
+        );
+      }
+      if (googleFields.Sitelink) {
+        fields.push(
+          "SiteLink (1): [text] ([character count])",
+          "SiteLink (2): [text] ([character count])"
+        );
+      }
+
       return `You are a skilled marketing copywriter with expertise in creating compelling ads. You will need to go through the following steps to ensure the exact demands of the input values and provide ${lines} versions of each of the requested outputs.
 
 Input Client:
@@ -110,12 +153,7 @@ Output ONLY the following fields for each ad, in this exact order, with no extra
 Each of the headlines contain up to 30 characters, descriptions up to 90 characters, and paths up to 15 characters.
 
 For each ad, output:
-Headline (1): [text] ([character count]) 
-Headline (2): [text] ([character count])
-Description (1): [text] ([character count])
-Description (2): [text] ([character count])
-Path (1): [text] ([character count])
-Path (2): [text] ([character count])
+${fields.join('\n')}
 
 Repeat for each ad for ${lines} times. Do not include any other text, explanations, or formatting.
 
@@ -263,31 +301,65 @@ Repeat for each ad for ${lines} times. Do not include any other text, explanatio
                 <span className="ml-2">Image Facebook Feed (always included)</span>
               </div>
               <div>
+                <input type="checkbox" checked={placements["Facebook Stories"]} onChange={() => handlePlacementChange("Facebook Stories")} id="fb-stories" />
+                <label htmlFor="fb-stories" className="ml-2">
+                  Facebook Stories
+                </label>
+              </div>
+              <div>
+                <input type="checkbox" checked={placements["Facebook Reels"]} onChange={() => handlePlacementChange("Facebook Reels")} id="fb-reels" />
+                <label htmlFor="fb-reels" className="ml-2">
+                  Facebook Reels
+                </label>
+              </div>
+              <div>
+                <input type="checkbox" checked={placements["Facebook Video Feed"]} onChange={() => handlePlacementChange("Facebook Video Feed")} id="fb-video-feed" />
+                <label htmlFor="fb-video-feed" className="ml-2">
+                  Facebook Video Feed
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+        {platform === "Google Ads" && (
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Select Google Ads Fields:</label>
+            <div className="ml-2">
+              <div>
                 <input
                   type="checkbox"
-                  checked={placements["Facebook Stories"]}
-                  onChange={() => handlePlacementChange("Facebook Stories")}
-                  id="fb-stories"
+                  checked={googleFields.Headline}
+                  onChange={() => handleGoogleFieldChange("Headline")}
+                  id="ga-headline"
                 />
-                <label htmlFor="fb-stories" className="ml-2">Facebook Stories</label>
+                <label htmlFor="ga-headline" className="ml-2">Headline</label>
               </div>
               <div>
                 <input
                   type="checkbox"
-                  checked={placements["Facebook Reels"]}
-                  onChange={() => handlePlacementChange("Facebook Reels")}
-                  id="fb-reels"
+                  checked={googleFields.Description}
+                  onChange={() => handleGoogleFieldChange("Description")}
+                  id="ga-description"
                 />
-                <label htmlFor="fb-reels" className="ml-2">Facebook Reels</label>
+                <label htmlFor="ga-description" className="ml-2">Description</label>
               </div>
               <div>
                 <input
                   type="checkbox"
-                  checked={placements["Facebook Video Feed"]}
-                  onChange={() => handlePlacementChange("Facebook Video Feed")}
-                  id="fb-video-feed"
+                  checked={googleFields.Path}
+                  onChange={() => handleGoogleFieldChange("Path")}
+                  id="ga-path"
                 />
-                <label htmlFor="fb-video-feed" className="ml-2">Facebook Video Feed</label>
+                <label htmlFor="ga-path" className="ml-2">Path</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  checked={googleFields.Sitelink}
+                  onChange={() => handleGoogleFieldChange("Sitelink")}
+                  id="ga-sitelink"
+                />
+                <label htmlFor="ga-sitelink" className="ml-2">Sitelink</label>
               </div>
             </div>
           </div>
