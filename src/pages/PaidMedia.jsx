@@ -91,7 +91,7 @@ Please write the ads in the correct spelling and grammar of ${language}
 Input Key Marketing Objective:
 The objective of the ads is to ${objective}
 
-If it is Sales then you will Extract from the landing page the product name, exact price (MANDATORY, INCLUDING DISCOUNTS OR PROMOTIONAL PRICING), 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
+If it is Sales then you will Extract from the landing page the product name, exact price, 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
 
 If it is Awareness then you will generate awareness for the product.
 
@@ -143,7 +143,7 @@ Please write the ads in the correct spelling and grammar of ${language}
 Input Key Marketing Objective:
 The objective of the ads is to ${objective}
 
-If it is Sales then you will Extract from the landing page the product name, exact price (MANDATORY, INCLUDING DISCOUNTS OR PROMOTIONAL PRICING), 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
+If it is Sales then you will Extract from the landing page the product name, exact price, 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
  
 If it is Awareness then you will generate awareness for the product.
 
