@@ -121,7 +121,7 @@ Inputs: URL: ${url}; Primary Keyword: ${pKeyword}; Secondary Keyword(s): ${sKeyw
 Input Key Marketing Objective:
 The objective of the ads is to ${objective}
 
-If it is Sales then Extract from the landing page the product name, price (including discounts or offers), 3 to 5 key features, customer benefits, call-to-action phrases, and any clues about the target audience.
+If it is Sales then focus will be on directly selling the product to the user. The content should emphasise product details, key benefits, and strong call-to-action (CTA) elements. The tone should be action-oriented, driving users towards making a purchase or conversion. This will include product-focused headlines, clear meta descriptions, and persuasive language encouraging immediate action.
 If it is Editorial then goal is to generate awareness and interest in the product. Content should highlight the product's value within a broader context, providing informative, engaging, and insightful content that educates the user. The approach will be more story-driven and centred around building awareness. Use content-driven headlines and descriptions, focusing on showcasing features and benefits in a more subtle, less direct way.
 
 Your task is to write:
