@@ -88,12 +88,31 @@ Please write the ads for ${input} and use the tone of voice of the website and t
 Input Language:
 Please write the ads in the correct spelling and grammar of ${language}
 
-Input Key Marketing Objective:
-The objective of the ads is to ${objective}
+Input Key: Marketing Objective
+The goal of the ads is: ${objective}
 
-If it is Sales then you will Extract from the landing page the product name, exact price, 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
+If the objective is Sales, analyze the landing page and extract the following:
+- Product name
+- Exact price (if unavailable, look for percentage discounts)
+- 3 to 5 key features
+- Customer benefits
+- Any available promotional offers
+- Clues about the target audience
+- A strong call-to-action
 
-If it is Awareness then you will generate awareness for the product.
+Ensure the extracted information is concise, relevant, and aligned with a persuasive sales tone.
+
+
+If the objective is Awareness, analyze the landing page and extract the following:
+- Brand name and positioning
+- Core message or value proposition
+- 3 to 5 key themes or topics emphasized
+- Emotional tone or storytelling elements
+- Target audience cues
+- Any slogans, taglines, or memorable phrases
+- Soft call-to-action (e.g., “Learn more,” “Explore,” etc.)
+
+Focus on conveying brand identity, recognition, and interest rather than direct conversion.
 
 ------
 
@@ -144,8 +163,32 @@ Input Key Marketing Objective:
 The objective of the ads is to ${objective}
 
 If it is Sales then you will Extract from the landing page the product name, exact price, 3 to 5 key features, customer benefits, any available offers, target audience cues, and strong call-to-action; if the price is not found, look for a percentage discount
- 
-If it is Awareness then you will generate awareness for the product.
+
+Input Key: Marketing Objective
+The goal of the ads is: ${objective}
+
+If the objective is Sales, analyze the landing page and extract the following:
+- Product name
+- Exact price (if unavailable, look for percentage discounts)
+- 3 to 5 key features
+- Customer benefits
+- Any available promotional offers
+- Clues about the target audience
+- A strong call-to-action
+
+Ensure the extracted information is concise, relevant, and aligned with a persuasive sales tone.
+
+
+If the objective is Awareness, analyze the landing page and extract the following:
+- Brand name and positioning
+- Core message or value proposition
+- 3 to 5 key themes or topics emphasized
+- Emotional tone or storytelling elements
+- Target audience cues
+- Any slogans, taglines, or memorable phrases
+- Soft call-to-action (e.g., “Learn more,” “Explore,” etc.)
+
+Focus on conveying brand identity, recognition, and interest rather than direct conversion.
 
 -------
 
